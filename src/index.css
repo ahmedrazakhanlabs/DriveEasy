@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@font-face {
+    font-family: 'Monsterrat';
+    src: url('./fonts/Montserrat-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Monsterrat-bold';
+    src: url('./fonts/Montserrat-ExtraBold.ttf') format('truetype');
+}
