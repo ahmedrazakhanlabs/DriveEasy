@@ -1,11 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import OtpVerification from "./screens/auth/OtpVerification";
 import Login from "./screens/auth/Login";
 import Home from "./screens/parent/Home";
-import Menubar from "./components/Menubar";
 import Lessons from "./screens/parent/Lessons";
-import DrivingAbility from "./screens/parent/DrivingAbility";
+import DrivingAbility from "./screens/parent/driving-ability/DrivingAbility";
 
 const App = () => {
   return (
