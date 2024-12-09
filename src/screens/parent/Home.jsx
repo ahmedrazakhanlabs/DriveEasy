@@ -5,14 +5,9 @@ import {
   CardIcon1,
   CardIcon2,
   CardIcon3,
-  ClipboardIcon,
-  HomeIcon,
-  InstructorIcon,
   NotifyBell,
-  PhoneIcon,
   ProgressIcon,
   SidebarIcon,
-  WorldIcon,
 } from "../../utils/Icons.jsx";
 import RadialBarChart from "../../components/charts/RadialChart.jsx";
 const Home = () => {
@@ -151,15 +146,6 @@ const Home = () => {
                 </span>
               </div>
             </div>
-          </div>
-        </div>
-
-        <div className=" w-full">
-          <div className="bg-white shadow-lg rounded-3xl fixed bottom-3 flex items-center justify-center gap-14 py-5 px-16 ml-2 z-50">
-            <HomeIcon />
-            <WorldIcon />
-            <PhoneIcon />
-            <ClipboardIcon />
           </div>
         </div>
       </div>
