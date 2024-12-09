@@ -17,6 +17,7 @@ export default {
           2: "#0000000D",
           3: "#00000014",
           4: "#0000001F",
+          5: "#f0f0f059",
         },
       },
       screens: {
@@ -35,8 +36,9 @@ export default {
         "h-lg": { raw: "(min-height: 1000px)" },
       },
       fontFamily: {
-        Monsterrat: ["Monsterrat", "sans-serif"], 
-        MonsterratBold: ["Monsterrat-bold", "sans-serif"], 
+        Monsterrat: ["Monsterrat", "sans-serif"],
+        MonsterratBold: ["Monsterrat-bold", "sans-serif"],
+        MonsterratExtraBold: ["Monsterrat-extrabold", "sans-serif"],
       },
     },
   },

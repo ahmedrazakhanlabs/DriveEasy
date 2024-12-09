@@ -13,7 +13,7 @@ const OtpVerification = () => {
     <div className="py-10 px-8 transition duration-200 ease-in-out">
       <div className="w-full">
         <div className="my-4 text-center">
-          <h6 className="text-2xl font-[700] font-MonsterratBold text-purple-1">
+          <h6 className="text-2xl font-[700] font-MonsterratExtraBold text-purple-1">
             LOGO HERE
           </h6>
           <p className="text-black-1 text-[9px] font-bold font-Monsterrat">

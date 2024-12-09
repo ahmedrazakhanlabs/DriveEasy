@@ -3,9 +3,11 @@ import { Women } from "../../assets";
 import Input from "../../components/Input";
 import { FingerPrintIcon, ProfileIcon, UserIcon } from "../../utils/Icons";
 import Button from "../../components/Button";
-import { Link, Routes } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Routes } from "../../utils/Routes";
 
 const Login = () => {
+  const navigate = useNavigate();
   return (
     <div>
       <div className="bg-purple-1 rounded-bl-[50px] flex items-center">
@@ -39,7 +41,7 @@ const Login = () => {
           className="rounded-3xl justify-center font-bold"
           radio={true}
           textCenter={true}
-          onClick={() => navigate(Routes.login)}
+          onClick={() => navigate(Routes.parentHome)}
         />
 
         <div className="flex justify-between mt-4 mx-2">
