@@ -547,3 +547,74 @@ export const WorldIcon = () => (
     />
   </svg>
 );
+
+export const NoDataFound = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="172.488"
+    height="182.196"
+    viewBox="0 0 172.488 182.196"
+  >
+    <g
+      id="Group_102"
+      data-name="Group 102"
+      transform="translate(-128 -298.804)"
+    >
+      <g
+        id="Group_101"
+        data-name="Group 101"
+        transform="translate(128 271.77)"
+        opacity="0.14"
+      >
+        <path
+          id="Path_104"
+          data-name="Path 104"
+          d="M70.271,36.255,2.5,153.641a18.444,18.444,0,0,0,15.973,27.666H154.017a18.444,18.444,0,0,0,15.973-27.666L102.217,36.255a18.444,18.444,0,0,0-31.946,0Z"
+          fill="#290088"
+        />
+        <path
+          id="Path_105"
+          data-name="Path 105"
+          d="M45.8,194.749a4.562,4.562,0,0,1-3.951-6.843L109.622,70.521a4.562,4.562,0,0,1,7.9,0L185.3,187.906a4.562,4.562,0,0,1-3.951,6.843H45.8Z"
+          transform="translate(-27.328 -27.324)"
+          fill="#6a2cf9"
+        />
+        <g
+          id="Group_100"
+          data-name="Group 100"
+          transform="translate(77.473 70.431)"
+        >
+          <path
+            id="Path_106"
+            data-name="Path 106"
+            d="M238.735,213.555a8.771,8.771,0,0,1-8.771-8.771V164.621a8.771,8.771,0,1,1,17.543,0v40.163A8.771,8.771,0,0,1,238.735,213.555Z"
+            transform="translate(-229.964 -155.85)"
+            fill="#290088"
+          />
+          <circle
+            id="Ellipse_21"
+            data-name="Ellipse 21"
+            cx="8.771"
+            cy="8.771"
+            r="8.771"
+            transform="translate(0 67.131)"
+            fill="#290088"
+          />
+        </g>
+      </g>
+      <text
+        id="Sorry_No_result_found_"
+        data-name="Sorry, No result found!"
+        transform="translate(135 477)"
+        font-size="14"
+        font-family="Montserrat-Medium, Montserrat"
+        font-weight="500"
+        opacity="0.34"
+      >
+        <tspan x="15" y="0">
+          Sorry, No result found!
+        </tspan>
+      </text>
+    </g>
+  </svg>
+);

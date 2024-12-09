@@ -10,6 +10,7 @@ import {
   SidebarIcon,
 } from "../../utils/Icons.jsx";
 import RadialBarChart from "../../components/charts/RadialChart.jsx";
+import Menubar from "../../components/Menubar.jsx";
 const Home = () => {
   const homeSection1 = [
     {
@@ -149,6 +150,11 @@ const Home = () => {
           </div>
         </div>
       </div>
+
+      <br />
+      <br />
+      <br />
+      <Menubar />
     </>
   );
 };
