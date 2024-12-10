@@ -12,7 +12,7 @@ const DrivingAbility = () => {
 
   return (
     <div>
-      <div className="p-4 space-y-6 font-Monsterrat">
+      <div className="p-4 space-y-6 font-Monsterrat relative">
         <div className="flex justify-center items-center gap-4">
           <button
             onClick={() => navigate(Routes.parentHome)}
@@ -35,7 +35,7 @@ const DrivingAbility = () => {
           ></div>
           <span
             onClick={() => setLessonActive(true)}
-            className={`text-[12px] px-7 py-2 transition-all font-semibold duration-500 rounded-full z-10 ${
+            className={`text-[12px] px-7 py-2 cursor-pointer transition-all font-semibold duration-500 rounded-full z-10 ${
               lessonActive
                 ? "font-MonsterratBold text-purple-1"
                 : "text-gray-600"
@@ -45,7 +45,7 @@ const DrivingAbility = () => {
           </span>
           <span
             onClick={() => setLessonActive(false)}
-            className={`text-[12px] px-7 py-2 font-semibold transition-all duration-500 rounded-full z-10 ${
+            className={`text-[12px] px-7 py-2 font-semibold cursor-pointer transition-all duration-500 rounded-full z-10 ${
               !lessonActive
                 ? "font-MonsterratBold text-purple-1"
                 : "text-gray-600"

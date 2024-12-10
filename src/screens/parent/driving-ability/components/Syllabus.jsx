@@ -160,11 +160,11 @@ export const Summary = () => {
               </div>
               <div className="w-full bg-gray-200 rounded-full relative">
                 <div
-                  className="bg-purple-1 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full h-4"
+                  className="bg-purple-1 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full h-3"
                   style={{ width: `${item.Percent}` }}
                 ></div>
                 <div
-                  className="w-6 h-6 bg-purple-1 top-[-4px] absolute rounded-full"
+                  className="w-6 h-6 bg-purple-1 top-[-6.4px] absolute rounded-full"
                   style={{ marginLeft: adjustedMarginLeft }}
                 >
                   <div
@@ -188,7 +188,7 @@ export const Summary = () => {
         <p className="font-MonsterratBold text-lg mb-3 mt-5 mx-1 mt font-extrabold">
           Lesson Summary
         </p>
-        <div className="flex items-center justify-center mt-[30%]">
+        <div className="flex items-center justify-center my-[20%]">
           <NoDataFound />
         </div>
       </div>

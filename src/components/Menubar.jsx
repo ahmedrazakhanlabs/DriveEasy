@@ -6,10 +6,10 @@ const Menubar = () => {
   const location = useLocation();
   return (
     <>
-      <div className=" w-full">
-        <div className="bg-white shadow-lg rounded-3xl fixed bottom-3 flex items-center justify-center gap-14 py-5 px-16 ml-2 z-50">
+      <div className="fixed bottom-3 left-0 right-0 flex justify-center z-50">
+        <div className="bg-white shadow-lg rounded-3xl flex items-center justify-center gap-14 py-5 px-16 z-50">
           {location.pathname === "/parent/home" ? (
-            <span className="font-MonsterratBold border-b-4 rounded-[3px] w-8 flex justify-center items-center border-purple-1 ">
+            <span className="font-MonsterratBold border-b-4 rounded-[3px] w-8 flex justify-center items-center border-purple-1">
               Home
             </span>
           ) : (

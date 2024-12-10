@@ -11,14 +11,19 @@ import {
 } from "../../utils/Icons.jsx";
 import RadialBarChart from "../../components/charts/RadialChart.jsx";
 import Menubar from "../../components/Menubar.jsx";
+import { useNavigate } from "react-router-dom";
+import { Routes } from "../../utils/Routes.jsx";
 const Home = () => {
+  const navigate = useNavigate();
   const homeSection1 = [
     {
       label: "Lesson",
+      onclick: () => navigate(Routes.parentLessons),
       icon: <CalenderIcon />,
     },
     {
       label: "Progress",
+      onclick: () => console.log("lesson"),
       icon: <ProgressIcon />,
     },
   ];
@@ -90,7 +95,8 @@ const Home = () => {
             {homeSection1.map((item, index) => (
               <div
                 key={index}
-                className="bg-purple-1 w-52 rounded-full py-3 px-5 flex items-center justify-center"
+                onClick={item.onclick}
+                className="bg-purple-1 w-52 rounded-full py-3 px-5 flex items-center justify-center cursor-pointer"
               >
                 {item.icon}
                 <span className="font-Monsterrat font-bold text-white px-2">

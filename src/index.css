@@ -13,7 +13,12 @@
     src: url('./fonts/Montserrat-Bold.ttf') format('truetype');
     }
     
-    @font-face {
+@font-face {
         font-family: 'Monsterrat-extrabold';
     src: url('./fonts/Montserrat-ExtraBold.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('./fonts/Poppins-Regular.ttf') format('truetype');
 }

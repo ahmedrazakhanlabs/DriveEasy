@@ -11,6 +11,9 @@ export default {
         },
         purple: {
           1: "#6A2CF9",
+          2: "#f3eeff",
+          3: "#290088",
+          4: "#9a87c7",
         },
         gray: {
           1: "#F6F6F6",
@@ -39,6 +42,7 @@ export default {
         Monsterrat: ["Monsterrat", "sans-serif"],
         MonsterratBold: ["Monsterrat-bold", "sans-serif"],
         MonsterratExtraBold: ["Monsterrat-extrabold", "sans-serif"],
+        Poppins: ["Poppins", "sans-serif"],
       },
     },
   },
