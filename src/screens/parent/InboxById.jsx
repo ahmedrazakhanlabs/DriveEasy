@@ -1,6 +1,8 @@
 import { ChevronLeft, EllipsisVertical, Paperclip, Pin } from "lucide-react";
 import React, { useState } from "react";
 import { SphereCircle } from "../../assets";
+import { Routes } from "../../utils/Routes";
+import { Link, useNavigate } from "react-router-dom";
 
 const Message = ({ message, isSender }) => {
   return (
@@ -61,6 +63,7 @@ const InboxById = () => {
     },
   ]);
 
+  const navigate = useNavigate();
   return (
     <div className="relative bg-white flex flex-col font-Poppins">
       {/* Header */}
@@ -70,9 +73,9 @@ const InboxById = () => {
           alt="Infinity Circle"
           className="absolute ml-[-100px] mt-[-150px] z-0 "
         />
-        <button className="text-white">
-          <ChevronLeft />
-        </button>
+        <Link to={Routes.parentInbox} className="text-white z-10">
+          <ChevronLeft className="h-5 w-5" />
+        </Link>
         <div className="flex items-center gap-3 flex-1">
           <div className="w-8 h-8 rounded-full bg-gray-300 overflow-hidden">
             <img

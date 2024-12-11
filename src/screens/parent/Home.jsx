@@ -32,15 +32,18 @@ const Home = () => {
     {
       label: "Pay",
       icon: <CardIcon1 />,
+      onclick: () => navigate(Routes.parentPayement),
     },
     {
       label: "Inbox",
       icon: <CardIcon2 />,
+      onclick: () => navigate(Routes.parentInbox),
     },
     {
       label: "Gap",
       icon: <CardIcon3 />,
       iconClass: "bottom-[-12px]",
+      onclick: () => navigate(Routes.parentDrivingAbility),
     },
   ];
 
@@ -74,8 +77,15 @@ const Home = () => {
               Terrence Hansen
             </h1>
           </div>
-          <div className="relative z-10  mb-[-4px]">
-            <img src={WomenProfile} alt="Women" className="w-16 h-16 mx-4" />
+          <div
+            className="relative z-10  mb-[-4px]"
+            onClick={() => navigate(Routes.parentProfile)}
+          >
+            <img
+              src={WomenProfile}
+              alt="Women"
+              className="w-16 h-16 mx-4  cursor-pointer"
+            />
           </div>
         </div>
       </div>
@@ -116,7 +126,8 @@ const Home = () => {
             {homeSection2.map((item, index) => (
               <div
                 key={index}
-                className="w-full bg-gray-2 px-4 py-7 rounded-2xl relative flex justify-center items-center"
+                onClick={item.onclick}
+                className="w-full bg-gray-2 cursor-pointer px-4 py-7 rounded-2xl relative flex justify-center items-center"
               >
                 <div
                   className={`absolute bottom-0 left-[-5px]  ${item.iconClass}`}

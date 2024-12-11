@@ -11,7 +11,7 @@ const Accordition = ({ items }) => {
   const AccordionItem = ({ index, title, content }) => (
     <div
       onClick={() => toggleAccordion(index)}
-      className="bg-white rounded-2xl shadow-lg transition-all duration-700 my-2"
+      className="bg-white rounded-2xl shadow-lg transition-all cursor-pointer duration-700 my-2"
     >
       <div
         className={`px-4 w-full flex justify-between items-center transition-all duration-700 ease-in-out pt-4 text-slate-800 focus:outline-none ${

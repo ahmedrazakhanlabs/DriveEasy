@@ -64,7 +64,7 @@ const Contacts = () => {
         </button>
         <div></div>
         <div className="flex justify-center items-center">
-          <h1 className="font-MonsterratBold text-[15px] text-center font-bold">
+          <h1 className="text-center font-MonsterratBold my-7 text-[18px] font-semibold">
             Contacts
           </h1>
         </div>

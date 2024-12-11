@@ -24,7 +24,7 @@ const RelativeLogs = () => {
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
-        <h1 className="text-[15px] font-Monsterrat text-center font-semibold">
+        <h1 className="text-center font-MonsterratBold my-7 text-[18px] font-semibold">
           Relative Logs
         </h1>
       </div>

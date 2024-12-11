@@ -1,6 +1,9 @@
 import React from "react";
 import Accordition from "../../components/Accordition";
 import Menubar from "../../components/Menubar";
+import { ChevronLeft } from "lucide-react";
+import { Routes } from "../../utils/Routes";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const accordionData = [
@@ -43,11 +46,21 @@ const Profile = () => {
     },
   ];
 
+  const navigate = useNavigate();
+
   return (
-    <div className="px-5">
-      <h1 className="text-center font-MonsterratBold my-7 text-[18px] font-semibold">
-        Resources
-      </h1>
+    <div className="px-5 relative">
+      <div className="flex justify-center items-center gap-4">
+        <button
+          onClick={() => navigate(Routes.parentHome)}
+          className="p-2 absolute left-2 rounded-full hover:bg-gray-100"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+        <h1 className="text-center font-MonsterratBold my-7 text-[18px] font-semibold">
+          Profile
+        </h1>
+      </div>
 
       <Accordition items={accordionData} />
     </div>

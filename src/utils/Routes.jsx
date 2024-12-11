@@ -8,4 +8,9 @@ export const Routes = {
   contacts: "/parent/contacts",
   AddContact: "/parent/add-contact",
   relativeLogs: "/parent/relative-logs",
+  parentInbox: "/parent/inbox",
+  parentPayement: "/parent/payement",
+  parentProfile: "/parent/profile",
+  parentInboxById: (id) => `/parent/inbox/${id}`,
+  parentInboxById: (id) => `/parent/inbox/${id}`,
 };

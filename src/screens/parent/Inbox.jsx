@@ -49,7 +49,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Routes } from "../../utils/Routes";
 import { ChevronLeft } from "lucide-react";
-import Button from "../../components/Button";
 
 const Inbox = () => {
   const navigate = useNavigate();
@@ -112,8 +111,11 @@ const Inbox = () => {
       </div>
       <div>
         {chats.map((chat) => (
-          <div key={chat.id}>
-            <div className="flex items-center gap-3 p-4 hover:bg-gray-50">
+          <div
+            key={chat.id}
+            onClick={() => navigate(Routes.parentInboxById(chat.id))}
+          >
+            <div className="flex items-center gap-3 cursor-pointer p-4 hover:bg-gray-50">
               <div className="flex-shrink-0">
                 <img
                   src={chat.avatar}
