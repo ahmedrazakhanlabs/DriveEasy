@@ -1,123 +1,135 @@
-import React from "react";
+import { ChevronLeft, EllipsisVertical, Paperclip, Pin } from "lucide-react";
+import React, { useState } from "react";
+import { SphereCircle } from "../../assets";
+
+const Message = ({ message, isSender }) => {
+  return (
+    <div
+      className={`flex flex-col ${
+        isSender ? "items-end ml-auto" : "items-start"
+      } max-w-[80%]`}
+    >
+      <div
+        className={`rounded-2xl text-[12px] px-4 py-2 ${
+          isSender
+            ? "bg-purple-4 text-black-1  text-[10px] rounded-xl py-3"
+            : "bg-[#F3E8FF] text-purple-1 rounded-xl py-3"
+        }`}
+      >
+        {message}
+      </div>
+    </div>
+  );
+};
 
 const InboxById = () => {
+  const [messages] = useState([
+    // Messages grouped by time
+    {
+      date: "Four days ago",
+      messages: [
+        { text: "Yeah. Right! As if that would happen!", isSender: false },
+        { text: "Anywho, gotta roll. G'night!", isSender: true },
+        { text: "Goodnight!", isSender: false },
+      ],
+    },
+    {
+      date: "TODAY",
+      messages: [
+        { text: "Wassup!!!!!", isSender: true },
+        { text: "So what did I miss yesterday?", isSender: true },
+        {
+          text: "So, while you were gone, a lot has happened. Let me give you a brief!",
+          isSender: false,
+        },
+        {
+          text: "Natalie from HR came to our floor looking for Steven. Remember the missing laptop from last week? It was definitely returned to him!",
+          isSender: false,
+        },
+        { text: "You know about this, right?", isSender: false },
+        { text: "So what did I miss yesterday?", isSender: true },
+        {
+          text: "So, while you were gone, a lot has happened. Let me give you a brief!",
+          isSender: false,
+        },
+        {
+          text: "Natalie from HR came to our floor looking for Steven. Remember the missing laptop from last week? It was definitely returned to him!",
+          isSender: false,
+        },
+        { text: "You know about this, right?", isSender: false },
+      ],
+    },
+  ]);
+
   return (
-    <div>
-      <div className="max-w-md mx-auto h-[600px] bg-white flex flex-col font-Poppins">
-        {/* Header */}
-        <div className="bg-purple-1 px-4 py-3 flex items-center gap-3 rounded-br-[25px]">
-          <button className="text-white">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 19.5L8.25 12l7.5-7.5"
-              />
-            </svg>
-          </button>
-          <div className="flex items-center gap-3 flex-1">
-            <div className="w-8 h-8 rounded-full bg-gray-300 overflow-hidden">
-              <img
-                src="/placeholder.svg"
-                alt=""
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <span className="text-white font-medium">Dan Wells</span>
+    <div className="relative bg-white flex flex-col font-Poppins">
+      {/* Header */}
+      <div className="bg-purple-1 px-4 py-5 flex items-center gap-3 rounded-br-[25px]">
+        <img
+          src={SphereCircle}
+          alt="Infinity Circle"
+          className="absolute ml-[-100px] mt-[-150px] z-0 "
+        />
+        <button className="text-white">
+          <ChevronLeft />
+        </button>
+        <div className="flex items-center gap-3 flex-1">
+          <div className="w-8 h-8 rounded-full bg-gray-300 overflow-hidden">
+            <img
+              src="https://images.pexels.com/photos/13404247/pexels-photo-13404247.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+              alt="profile"
+              className="w-full h-full object-cover"
+            />
           </div>
-          <button className="text-white">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-              />
-            </svg>
-          </button>
+          <span className="text-white font-bold text-[13px]">Dan Wells</span>
         </div>
+        <button className="text-white">
+          <EllipsisVertical className="h-5 w-5" />
+        </button>
+      </div>
 
-        {/* Chat Area */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
-          {/* Four days ago */}
-          <div className="text-xs text-center text-gray-500">Four days ago</div>
-          <div className="space-y-2">
-            <div className="flex flex-col items-start max-w-[80%]">
-              <div className="bg-[#F3E8FF] text-purple-1 rounded-2xl rounded-tl-sm px-4 py-2 text-[12px]">
-                Yeah. Right! As if that would happen!
+      {/* Chat Area */}
+      <div
+        className="flex-1 overflow-y-auto pb-30 px-4 space-y-6"
+        style={{ maxHeight: "calc(100vh - 130px)" }}
+      >
+        {/* Added maxHeight to ensure the container doesn't overflow */}
+        <div>
+          {messages.map((chat, index) => (
+            <div key={index}>
+              {/* Date Header */}
+              <div className="text-[10px] text-center font-bold text-gray-700 my-5">
+                {chat.date}
+              </div>
+              <div className="space-y-2">
+                {chat.messages.map((msg, idx) => (
+                  <Message
+                    key={idx}
+                    message={msg.text}
+                    isSender={msg.isSender}
+                  />
+                ))}
               </div>
             </div>
-            <div className="flex flex-col items-end max-w-[80%] ml-auto">
-              <div className="bg-purple-4  text-black-1 rounded-2xl rounded-tr-sm px-4 py-2 text-[12px] ">
-                Anywho, gotta roll. G'night!
-              </div>
-            </div>
-            <div className="flex flex-col items-start max-w-[80%]">
-              <div className="bg-[#F3E8FF] text-purple-1 rounded-2xl rounded-tl-sm px-4 py-2 text-[12px]">
-                Goodnight!
-              </div>
-            </div>
-          </div>
-
-          {/* Today */}
-          <div className="text-xs text-center text-gray-500">TODAY</div>
-          <div className="space-y-2">
-            <div className="flex flex-col items-end max-w-[80%] ml-auto">
-              <div className="bg-purple-4  text-black-1 rounded-2xl rounded-tr-sm px-4 py-2 text-[12px] ">
-                Wassup!!!!!
-              </div>
-            </div>
-            <div className="flex flex-col items-end max-w-[80%] ml-auto">
-              <div className="bg-purple-4  text-black-1 rounded-2xl rounded-tr-sm px-4 py-2 text-[12px] ">
-                So what did I miss yesterday?
-              </div>
-            </div>
-            <div className="flex flex-col items-start max-w-[80%]">
-              <div className="bg-[#F3E8FF] text-purple-1 rounded-2xl rounded-tl-sm px-4 py-2 text-[12px]">
-                So, while you were gone, a lot has happened. Let me give you a
-                brief!
-              </div>
-            </div>
-            <div className="flex flex-col items-start max-w-[80%]">
-              <div className="bg-[#F3E8FF] text-purple-1 rounded-2xl rounded-tl-sm px-4 py-2 text-[12px]">
-                Natalie from HR came to our floor looking for Steven. Remember
-                the missing laptop from last week? It was definitely returned to
-                him!
-              </div>
-            </div>
-            <div className="flex flex-col items-start max-w-[80%]">
-              <div className="bg-[#F3E8FF] text-purple-1 rounded-2xl rounded-tl-sm px-4 py-2 text-[12px]">
-                You know about this, right?
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
+      </div>
 
-        {/* Input Area */}
-        <div className="p-4 border-t">
-          <div className="flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2">
+      {/* Input Area */}
+      <div className="md:min-w-[436px] w-[100%] md:w-[50%] lg:w-[30%]  p-4 border-t fixed bottom-0  bg-white z-10">
+        {/* Added z-10 to ensure it stays on top */}
+        <div className="w-full flex items-center gap-2 ">
+          <div className="flex items-center gap-3 w-full  sm:w-[calc(100%-80px)] bg-gray-6 rounded-2xl px-4 py-3">
             <input
               type="text"
               placeholder="Type here..."
-              className="flex-1 bg-transparent outline-none text-[12px]"
+              className="flex-1 bg-transparent placeholder:text-black-1 opacity-40 outline-none text-[12px] sm:text-sm"
             />
-            <button className="text-[#7C3AED] font-medium text-[12px]">
-              Send
-            </button>
+            <Paperclip className="w-4 h-4 text-black-1 opacity-40" />
           </div>
+          <button className="bg-purple-1 text-white px-4 py-3 h-full rounded-full font-medium text-[12px] sm:text-sm sm:px-6 sm:py-2">
+            Send
+          </button>
         </div>
       </div>
     </div>

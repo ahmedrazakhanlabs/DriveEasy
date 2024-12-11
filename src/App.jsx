@@ -8,6 +8,11 @@ import DrivingAbility from "./screens/parent/driving-ability/DrivingAbility";
 import Payement from "./screens/parent/payement/Payement";
 import Inbox from "./screens/parent/Inbox";
 import InboxById from "./screens/parent/InboxById";
+import Resources from "./screens/parent/Resources";
+import Contacts from "./screens/parent/contacts/Contacts";
+import AddContact from "./screens/parent/contacts/subpage/AddContact";
+import Profile from "./screens/parent/Profile";
+import RelativeLogs from "./screens/parent/RelativeLogs";
 
 const App = () => {
   return (
@@ -22,6 +27,11 @@ const App = () => {
           <Route path="/parent/payement" element={<Payement />} />
           <Route path="/parent/inbox" element={<Inbox />} />
           <Route path="/parent/inbox/:id" element={<InboxById />} />
+          <Route path="/parent/resources" element={<Resources />} />
+          <Route path="/parent/contacts" element={<Contacts />} />
+          <Route path="/parent/add-contact" element={<AddContact />} />
+          <Route path="/parent/profile" element={<Profile />} />
+          <Route path="/parent/relative-logs" element={<RelativeLogs />} />
         </Routes>
       </Router>
     </div>

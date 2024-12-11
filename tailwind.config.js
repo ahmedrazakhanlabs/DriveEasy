@@ -21,6 +21,7 @@ export default {
           3: "#00000014",
           4: "#0000001F",
           5: "#f0f0f059",
+          6: "#eaeaea",
         },
       },
       screens: {

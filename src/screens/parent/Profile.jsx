@@ -1,0 +1,57 @@
+import React from "react";
+import Accordition from "../../components/Accordition";
+import Menubar from "../../components/Menubar";
+
+const Profile = () => {
+  const accordionData = [
+    {
+      title: "Edit Profile",
+      content:
+        "Edit your personal information and update your account details.",
+    },
+    {
+      title: "Day Availability",
+      content: "Set your availability for scheduling driving lessons.",
+    },
+    {
+      title: "Change Profile Photo",
+      content: "Upload or change your profile picture.",
+    },
+    {
+      title: "Invite Parents",
+      content: "Send an invitation to parents to track your driving progress.",
+    },
+    {
+      title: "Call Instructor",
+      content: "Directly call your driving instructor for queries or updates.",
+    },
+    {
+      title: "Send SMS Message",
+      content: "Send a text message to your instructor or the driving school.",
+    },
+    {
+      title: "Driving School Terms & Conditions",
+      content: "Review the terms and conditions of the driving school.",
+    },
+    {
+      title: "App Terms of Use",
+      content: "Read the terms of use for the application.",
+    },
+    {
+      title: "Log Out",
+      content: "Log out of your account securely.",
+    },
+  ];
+
+  return (
+    <div className="px-5">
+      <h1 className="text-center font-MonsterratBold my-7 text-[18px] font-semibold">
+        Resources
+      </h1>
+
+      <Accordition items={accordionData} />
+    </div>
+  );
+};
+
+export default Profile;

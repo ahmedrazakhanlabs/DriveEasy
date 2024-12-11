@@ -21,7 +21,7 @@ const Button = ({
       {prefixIcon && <span className="pb-1">{prefixIcon}</span>}
       {label && (
         <div
-          className={`ml-2 font-Monsterrat text-sm text-center text-white`}
+          className={`ml-2 font-Monsterrat  text-center text-white`}
           style={{ letterSpacing: "1px" }}
         >
           {label}

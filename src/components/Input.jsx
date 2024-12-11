@@ -20,7 +20,9 @@ const Input = ({ type = "text", prefixIcon, suffixIcon, placeholder , className 
       className={`relative bg-white rounded-2xl  shadow-lg font-Montserrat px-4 py-2 ${className}`}
     >
       {placeholder && (
-        <p className="text-sm text-gray-500 opacity-70">{placeholder}</p>
+        <p className="font-Monsterrat font-bold text-[11px] text-gray-500 opacity-70">
+          {placeholder}
+        </p>
       )}
 
       {prefixIcon && (
@@ -33,8 +35,7 @@ const Input = ({ type = "text", prefixIcon, suffixIcon, placeholder , className 
         type={inputType}
         value={inputValue}
         onChange={handleChange}
-        className={`w-[70%] sm:w-auto  py-2 ml-8 pr-10 rounded-md focus:outline-none font-Monsterrat `}
-        placeholder={placeholder}
+        className={`w-[70%] sm:w-auto lg:w-[100%]  py-2 ml-8 pr-10 rounded-md  font-bold focus:outline-none font-Monsterrat `}
       />
 
       {suffixIcon && (
