@@ -13,14 +13,16 @@ import Contacts from "./screens/parent/contacts/Contacts";
 import AddContact from "./screens/parent/contacts/subpage/AddContact";
 import Profile from "./screens/parent/Profile";
 import RelativeLogs from "./screens/parent/RelativeLogs";
+import Signup from "./screens/auth/signup/Signup";
 
 const App = () => {
   return (
     <div>
       <Router>
         <Routes>
-          <Route path="/" element={<OtpVerification />} />
+          <Route path="/otp-verfication" element={<OtpVerification />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Signup />} />
           <Route path="/parent/home" element={<Home />} />
           <Route path="/parent/lessons" element={<Lessons />} />
           <Route path="/parent/driving-ability" element={<DrivingAbility />} />
