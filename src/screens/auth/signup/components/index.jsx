@@ -5,6 +5,7 @@ import ErrorMessage from "../../../../components/ErrorMessage";
 import { validationSchema } from "../../../../utils/ValidationSchema";
 import * as Yup from "yup";
 import Confetti from "react-confetti"; // Import react-confetti
+import { postRequest } from "../../../../helpers/Functions";
 
 export const Section1 = ({ setFormData, formData, setIsNext }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -22,6 +23,7 @@ export const Section1 = ({ setFormData, formData, setIsNext }) => {
 
   useEffect(() => {
     setIsVisible(true);
+    formik.handleSubmit();
   }, []);
 
   useEffect(() => {
@@ -39,11 +41,11 @@ export const Section1 = ({ setFormData, formData, setIsNext }) => {
 
   return (
     <div
-      className={`transition-all duration-700 ${
-        isVisible ? "opacity-100" : "opacity-0"
+      className={`transition-all duration-700 transform ${
+        isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full"
       }`}
     >
-      <form className="max-w-md p-6 space-y-4" onSubmit={formik.handleSubmit}>
+      <form className=" space-y-4" onSubmit={formik.handleSubmit}>
         {[{ label: "Postal Code", name: "postalCode", type: "number" }].map(
           ({ label, name, type }) => (
             <div key={name} className="space-y-2">
@@ -94,7 +96,7 @@ export const Section2 = ({ setFormData, formData, setIsNext }) => {
   });
 
   useEffect(() => {
-    formik.validateForm(); // Trigger validation manually after mount
+    formik.handleSubmit();
   }, []);
 
   useEffect(() => {
@@ -113,8 +115,8 @@ export const Section2 = ({ setFormData, formData, setIsNext }) => {
 
   return (
     <div
-      className={`transition-all duration-700 ${
-        isVisible ? "opacity-100" : "opacity-0"
+      className={`transition-all duration-700 transform ${
+        isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full"
       }`}
     >
       <form className="space-y-4" onSubmit={formik.handleSubmit}>
@@ -136,9 +138,10 @@ export const Section2 = ({ setFormData, formData, setIsNext }) => {
               </button>
             ))}
             {formik.errors.selectedLesson && formik.touched.selectedLesson && (
-              <div className="text-red-500 text-sm mt-2">
-                {formik.errors.selectedLesson}
-              </div>
+              <ErrorMessage
+                ErrorMessage={formik.errors.selectedLesson}
+                className={"text-center"}
+              />
             )}
           </div>
         </div>
@@ -152,6 +155,7 @@ export const Section2 = ({ setFormData, formData, setIsNext }) => {
 
 export const Section3 = ({ setFormData, formData, setIsNext }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [instructor, setInstructor] = useState({ id: 1, name: "Jimmy Tim" });
 
   const packages = [
     { id: 1, hours: 5, price: 59.5 },
@@ -185,15 +189,16 @@ export const Section3 = ({ setFormData, formData, setIsNext }) => {
     const isFormInvalid = Object.keys(formik.errors).length > 0;
     setIsNext(!isFormInvalid);
     setFormData((prev) => ({ ...prev, ...formik.values }));
+    setFormData((prev) => ({ ...prev, instructor: instructor.name }));
   }, [formik.errors, formik.values, setIsNext, setFormData]);
 
   return (
     <div
-      className={`transition-all duration-700 ${
-        isVisible ? "opacity-100" : "opacity-0"
+      className={`transition-all duration-700 transform ${
+        isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full"
       }`}
     >
-      <form className="max-w-md p-6 space-y-4" onSubmit={formik.handleSubmit}>
+      <form className=" space-y-4" onSubmit={formik.handleSubmit}>
         <div className="mb-8">
           <h2 className="text-lg font-Monsterrat font-bold mb-4">
             What type of lessons do you want?
@@ -230,7 +235,9 @@ export const Section3 = ({ setFormData, formData, setIsNext }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-purple-5 rounded-full flex items-center justify-center">
-                <span className="text-purple-1">JT</span>
+                <span className="text-purple-1 font-Monsterrat font-bold">
+                  JT
+                </span>
               </div>
               <span className="font-Monsterrat font-bold text-[14px]">
                 Jimmy Tim
@@ -304,11 +311,8 @@ export const Section3 = ({ setFormData, formData, setIsNext }) => {
   );
 };
 
-export const Section4 = ({ setFormData, formData, setIsNext }) => {
+export const Section4 = ({ setFormData, formData, setIsNext, errorText }) => {
   const [isVisible, setIsVisible] = useState(false);
-  useEffect(() => {
-    setIsVisible(true); // Trigger animation when component is mounted
-  }, []);
   const formik = useFormik({
     initialValues: formData,
     validationSchema: Yup.object({
@@ -323,6 +327,10 @@ export const Section4 = ({ setFormData, formData, setIsNext }) => {
       setFormData((prev) => ({ ...prev, ...values }));
     },
   });
+  useEffect(() => {
+    formik.handleSubmit();
+    setIsVisible(true); // Trigger animation when component is mounted
+  }, []);
 
   useEffect(() => {
     // Check if the form is valid or not
@@ -334,11 +342,12 @@ export const Section4 = ({ setFormData, formData, setIsNext }) => {
     // Synchronize formData with parent component in real-time
     setFormData((prev) => ({ ...prev, ...formik.values }));
   }, [formik.errors, formik.values, setIsNext, setFormData]);
+  console.log("errorText", errorText);
 
   return (
     <div
-      className={`transition-all duration-700 ${
-        isVisible ? "opacity-100" : "opacity-0"
+      className={`transition-all duration-700 transform ${
+        isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full"
       }`}
     >
       <form className="space-y-4" onSubmit={formik.handleSubmit}>
@@ -361,6 +370,9 @@ export const Section4 = ({ setFormData, formData, setIsNext }) => {
               onChange={formik.handleChange}
               name={name}
             />
+            {label == "Learner email address" && (
+              <ErrorMessage ErrorMessage={errorText} />
+            )}
             {formik.errors[name] && formik.touched[name] && (
               <ErrorMessage ErrorMessage={formik.errors[name]} />
             )}
@@ -385,19 +397,24 @@ export const Section4 = ({ setFormData, formData, setIsNext }) => {
 export const Section5 = ({ setFormData, formData, setIsNext }) => {
   const [isVisible, setIsVisible] = useState(false);
 
-  useEffect(() => {
-    setIsVisible(true); // Trigger animation when component is mounted
-  }, []);
   const formik = useFormik({
     initialValues: formData,
-    validationSchema,
+    validationSchema: Yup.object({
+      cardNumber: validationSchema.fields.cardNumber,
+      expiryDate: validationSchema.fields.expiryDate,
+      cvv: validationSchema.fields.cvv,
+      cardName: validationSchema.fields.cardName,
+    }),
     validateOnMount: true,
     onSubmit: (values) => {
       // Update formData when the form is submitted (if needed)
       setFormData((prev) => ({ ...prev, ...values }));
     },
   });
-
+  useEffect(() => {
+    formik.handleSubmit();
+    setIsVisible(true); // Trigger animation when component is mounted
+  }, []);
   useEffect(() => {
     // Check if the form is valid or not
     const isFormInvalid = Object.keys(formik.errors).length > 0;
@@ -410,11 +427,9 @@ export const Section5 = ({ setFormData, formData, setIsNext }) => {
 
   return (
     <div
-      className={`transition-all duration-700  `}
-      style={{
-        maxHeight: isVisible ? "100vh" : "0px",
-        overflow: "hidden", // To hide the content when width is 0
-      }}
+      className={`transition-all duration-700 transform ${
+        isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full"
+      }`}
     >
       <div className=" ">
         <h2 className="text-xl font-MonsterratBold font-bold mb-6">Summary</h2>
@@ -513,65 +528,204 @@ export const Section5 = ({ setFormData, formData, setIsNext }) => {
   );
 };
 
-export const Section6 = () => {
+export const Section6 = ({ setFormData, formData, setIsNext, errorText }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [hasConfetti, setHasConfetti] = useState(false); // State to control confetti
-
+  const formik = useFormik({
+    initialValues: formData,
+    validationSchema: Yup.object({
+      password: validationSchema.fields.password,
+      confirmPassword: validationSchema.fields.confirmPassword,
+    }),
+    validateOnMount: true,
+    onSubmit: (values) => {
+      setFormData((prev) => ({ ...prev, ...values }));
+    },
+  });
   useEffect(() => {
-    setIsVisible(true); // Trigger animation when component is mounted
-    setHasConfetti(true); // Start confetti after visibility is triggered
-    // Optionally, you can stop confetti after a few seconds
-    setTimeout(() => setHasConfetti(false), 5000); // Stop confetti after 5 seconds
+    formik.handleSubmit();
+    setIsVisible(true);
   }, []);
+  useEffect(() => {
+    const isFormInvalid = Object.keys(formik.errors).length > 0;
+    setIsNext(!isFormInvalid);
+    setFormData((prev) => ({ ...prev, ...formik.values }));
+  }, [formik.errors, formik.values, setIsNext, setFormData]);
 
   return (
-    <div className={`transition-all duration-700`}>
-      {hasConfetti && <Confetti />} {/* Render confetti when it's true */}
-      <h2 className="font-MonsterratBold font-bold text-center text-xl">
-        Congratulations!
-      </h2>
-      <p className="font-Monsterrat font-bold text-center text-[15px]">
-        Your Booking has been created.
-      </p>
+    <div
+      className={`transition-all duration-700 transform ${
+        isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full"
+      }`}
+    >
+      <form className="space-y-4" onSubmit={formik.handleSubmit}>
+        {[
+          { label: "Password", name: "password", type: "password" },
+          {
+            label: "Confirm Password",
+            name: "confirmPassword",
+            type: "password",
+          },
+        ].map(({ label, name, type }) => (
+          <div key={name} className="space-y-2">
+            <InputTwo
+              label={label}
+              type={type}
+              placeholder={`Enter ${label.toLowerCase()}`}
+              value={formik.values[name]}
+              onChange={formik.handleChange}
+              name={name}
+            />
+            {label == "Learner email address" && (
+              <ErrorMessage ErrorMessage={errorText} />
+            )}
+            {formik.errors[name] && formik.touched[name] && (
+              <ErrorMessage ErrorMessage={formik.errors[name]} />
+            )}
+          </div>
+        ))}
+
+        <label className="flex items-center gap-2">
+          <input type="checkbox" className="w-4 h-4 text-purple-600 rounded" />
+          <p className="font-Monsterrat font-bold text-[12px] text-black-1 opacity-60">
+            I accept terms and Policy.
+          </p>
+        </label>
+
+        {/* Submit button (hidden, optional if you don't trigger submit manually) */}
+        <button type="submit" className="hidden">
+          Submit
+        </button>
+      </form>
     </div>
   );
 };
-
-export const Section7 = () => {
+export const Section7 = ({
+  setSection,
+  formData,
+  setErrorText,
+  loading,
+  setLoading,
+}) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [hasConfetti, setHasConfetti] = useState(false);
+  const [loadingText, setLoadingText] = useState("It will take a moment");
+
+  const data = {
+    firstName: formData.firstName,
+    lastName: formData.lastName,
+    email: formData.emailAddress,
+    password: formData.password,
+    profilePicture: "https://example.com/profile.jpg",
+    phoneNumber: formData.phoneNumber,
+    dob: "1990-01-01T00:00:00Z",
+    pickupAddress: "123 Street Name, City, Country",
+    billingAddress: "456 Another Street, City, Country",
+    postalCode: formData.postalCode,
+    lessonsType: formData.selectedType,
+    instructor: formData.instructor,
+    plan: formData.selectedPackage,
+    cardDetails: {
+      cardNo: formData.cardNumber,
+      expiry: formData.expiryDate,
+      cvv: formData.cvv,
+      name: formData.cardName,
+    },
+  };
+
+  const loadingTexts = [
+    "It will take a moment",
+    "Loading",
+    "Please hold on, your request is being processed",
+  ];
+
+  const Signup = async () => {
+    setLoading(true);
+    try {
+      const response = await postRequest("pupil/register", data);
+      console.log("Registration Successful:", response);
+      setLoading(false);
+    } catch (error) {
+      if (error.response?.data || error.message === "Email already taken") {
+        setTimeout(() => {
+          setSection(4);
+          setLoading(false);
+        }, 2000);
+        setErrorText("Email already taken");
+        console.log("errorText", errorText);
+      }
+      console.error(
+        "Registration Failed:",
+        error.response?.data || error.message
+      );
+    }
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  };
 
   useEffect(() => {
-    setIsVisible(true); // Trigger animation when component is mounted
+    Signup();
+    setIsVisible(true);
+    setHasConfetti(true);
+    setTimeout(() => setHasConfetti(false), 8000);
+
+    // Change loading text every 2 seconds
+    const intervalId = setInterval(() => {
+      setLoadingText((prevText) => {
+        const currentIndex = loadingTexts.indexOf(prevText);
+        const nextIndex = (currentIndex + 1) % loadingTexts.length;
+        return loadingTexts[nextIndex];
+      });
+    }, 2000);
+
+    // Clear interval when loading is done
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
     <div
-      className={`transition-all duration-700  `}
-      style={{
-        maxHeight: isVisible ? "100vh" : "0px",
-        overflow: "hidden", // To hide the content when width is 0
-      }}
+      className={`transition-all duration-700 transform ${
+        isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full"
+      }`}
     >
-      Lorem ipsum dolor sit, amet consectetur adipisicing elit. Unde, non!
-      Dolore minima harum voluptatibus illo doloremque deserunt praesentium
-      soluta consequatur? Lorem ipsum dolor sit amet consectetur, adipisicing
-      elit. Tenetur, ab adipisci odio eum doloremque, in tempora quidem aperiam
-      aliquid unde, totam praesentium mollitia facere itaque ex pariatur. Labore
-      esse earum et iusto perferendis odit, ratione nobis molestiae aliquam
-      quia, commodi placeat vitae autem cupiditate non nisi quaerat minus
-      eligendi. Suscipit recusandae deleniti enim iure in saepe ex accusantium
-      illo quia facilis ut veniam cum rerum molestias, laboriosam corrupti
-      aperiam repudiandae cupiditate cumque voluptate impedit totam veritatis.
-      Doloribus eius dignissimos praesentium non! Dolor provident minus et enim
-      sed soluta iure porro, itaque debitis nostrum qui sint accusantium
-      excepturi officiis laboriosam cum ullam eos, alias dolores iusto nobis!
-      Expedita, ea debitis provident iure doloribus quod dignissimos eligendi
-      magnam distinctio porro id ratione obcaecati alias, sit voluptatibus nulla
-      maiores corporis. Facilis eius eaque odit quis perspiciatis cupiditate,
-      numquam modi consequuntur minima mollitia soluta voluptates labore
-      obcaecati nemo dicta fugiat ut libero? Tempore eum, natus amet accusantium
-      at non nostrum voluptas sint. Est, rerum deserunt. Deserunt repellat
-      possimus cumque! Perferendis?
+      {!loading && hasConfetti && (
+        <div className="absolute z-50 mt-[-270px]">
+          <Confetti />
+        </div>
+      )}
+      {!loading && (
+        <>
+          <h2 className="font-MonsterratBold font-bold text-center text-xl">
+            Congratulations!
+          </h2>
+          <p className="font-Monsterrat font-bold text-center text-[15px]">
+            Your Booking has been created.
+          </p>
+        </>
+      )}
+      {loading && (
+        <div className="flex flex-col items-center justify-center py-[30px]">
+          <br />
+          <br />
+          <br />
+          <div className="dot-spinner ">
+            <div className="dot-spinner__dot"></div>
+            <div className="dot-spinner__dot"></div>
+            <div className="dot-spinner__dot"></div>
+            <div className="dot-spinner__dot"></div>
+            <div className="dot-spinner__dot"></div>
+            <div className="dot-spinner__dot"></div>
+            <div className="dot-spinner__dot"></div>
+            <div className="dot-spinner__dot"></div>
+          </div>
+          <p className="font-Monsterrat text-[13px] my-4 font-extrabold">
+            {loadingText}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
+
+
+

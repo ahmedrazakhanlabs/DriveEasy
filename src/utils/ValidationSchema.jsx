@@ -33,14 +33,14 @@ export const validationSchema = Yup.object({
   selectedLesson: Yup.string().trim().required("Please select a lesson type."),
   cardNumber: Yup.string()
     .required("Card number is required")
-    .matches(/^[0-9]{13,19}$/, "Card number must be between 13 and 19 digits"),
+    .matches(/^[0-9]{16}$/, "Card number must be exactly 16 digits"),
 
   expiryDate: Yup.string()
     .required("Expiry date is required")
     .matches(
-      /^(0[1-9]|1[0-2])\/?([0-9]{2})$/,
-      "Invalid expiry date (MM/YY format)"
-    ), // MM/YY format
+      /^(20[0-9]{2})-(0[1-9]|1[0-2])$/,
+      "Invalid expiry date (YYYY-MM format)"
+    ),
 
   cvv: Yup.string()
     .required("CVV is required")
@@ -52,4 +52,16 @@ export const validationSchema = Yup.object({
       /^[a-zA-Z\s]+$/,
       "Cardholder name can only contain letters and spaces"
     ),
+  password: Yup.string()
+    .min(8, "Password must be at least 8 characters long")
+    .max(20, "Password cannot exceed 20 characters")
+    .matches(
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])(?=.*[A-Z]).{8,20}$/,
+      "Password must contain at least one uppercase letter, one number, and one special character"
+    )
+    .required("Password is required"),
+
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password"), null], "Passwords must match")
+    .required("Confirm password is required"),
 });
