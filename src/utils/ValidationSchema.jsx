@@ -37,10 +37,7 @@ export const validationSchema = Yup.object({
 
   expiryDate: Yup.string()
     .required("Expiry date is required")
-    .matches(
-      /^(20[0-9]{2})-(0[1-9]|1[0-2])$/,
-      "Invalid expiry date (YYYY-MM format)"
-    ),
+    .matches(/^(0[1-9]|1[0-2])\/\d{2}$/, "Invalid expiry date (MM/YY format)"),
 
   cvv: Yup.string()
     .required("CVV is required")
