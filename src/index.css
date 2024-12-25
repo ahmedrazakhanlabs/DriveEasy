@@ -9,6 +9,10 @@
 }
 
 @font-face {
+  font-family: 'JosefinSans';
+  src: url('./fonts/JosefinSans-Regular.ttf') format('truetype');
+}
+@font-face {
     font-family: 'Monsterrat-bold';
     src: url('./fonts/Montserrat-Bold.ttf') format('truetype');
     }
@@ -25,11 +29,6 @@
 ::-webkit-scrollbar {
     display: none;
 }
-
-
-/* Animmations */
-
-/* From Uiverse.io by abrahamcalsin */ 
 .dot-spinner {
   --uib-size: 2.8rem;
   --uib-speed: .9s;
@@ -132,4 +131,100 @@
     transform: scale(1);
     opacity: 1;
   }
+}
+
+.react-calendar {
+  border-radius: 4px;
+  padding: 10px;
+  border: none !important;
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+.react-calendar__navigation__label__labelText {
+  display: none !important;
+}
+
+.react-calendar__navigation {
+  height: 2px !important;
+  margin-bottom: 40px !important;
+  margin-top: -40px !important;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth {
+  color: #a3a1a1;
+}
+
+.react-calendar__tile--now {
+  background-color: #c6b5ef !important;
+  color: white !important;
+  font-weight: bold !important;
+  border-radius: 20% !important;
+  font-family: 'MontserratBold', sans-serif !important;
+}
+
+.react-calendar__tile--active {
+  background-color: #6A2CF9 !important;
+  color: white !important;
+  font-weight: bold !important;
+  border-radius: 20% !important;
+  font-family: 'MontserratBold', sans-serif !important;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  font-family: 'MontserratBold', sans-serif !important;
+  font-weight: bold !important;
+  color: #a3a1a1 !important;
+
+}
+
+.react-calendar__tile:hover {
+  font-family: 'MontserratBold',
+    sans-serif !important;
+  background-color: #d1c4e9;
+  border-radius: 50%;
+}
+
+.react-calendar__tile {
+  font-family: 'MontserratBold', sans-serif !important;
+  color: #a3a1a1;
+  font-weight: 400;
+  font-weight: bold !important;
+}
+
+.react-calendar__navigation button {
+  color: #ffffff !important;
+  font-family: 'MontserratBold', sans-serif !important;
+  font-weight: bold;
+  display: none;
+}
+
+.react-calendar__tile--hasActive {
+  border-radius: 10px !important;
+  color: white !important;
+  background: #6A2CF9 !important;
+}
+
+abbr:where([title]) {
+  text-decoration: none !important;
+}
+
+.react-calendar__month-view__weekdays {
+  font-family: 'Monsterrat', sans-serif !important;
+  background-color: #6A2CF9;
+  margin: 5px 0px;
+  color: white;
+  border-radius: 5px;
+  font-size: 12px !important;
+  text-decoration: none !important;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  font-size: 10px !important;
+}
+
+.react-calendar__tile--now {
+  font-family: 'MontserratBold', sans-serif !important;
+  background-color: #6A2CF9;
+  border-radius: 50%;
+  font-weight: bold;
 }

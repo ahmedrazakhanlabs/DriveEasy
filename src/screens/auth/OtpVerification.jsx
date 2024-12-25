@@ -38,7 +38,10 @@ const OtpVerification = () => {
               prefixIcon={<ProfileIcon />}
             />
             <Button
-              onClick={() => setUserType("instructor")}
+              onClick={() => {
+                setUserType("instructor");
+                navigate(Routes.InstructorHome);
+              }}
               isActive={userType === "instructor"}
               label="Instructor"
               className="rounded-lg"

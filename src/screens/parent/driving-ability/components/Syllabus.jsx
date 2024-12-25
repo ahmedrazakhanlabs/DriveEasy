@@ -1,59 +1,15 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import GearLines from "../../../../components/GearLines";
 import { Percent } from "lucide-react";
 import { NoDataFound } from "../../../../utils/Icons";
+import {
+  progressData,
+  drivingAblilityData,
+  drivingAblilityListingData,
+  JunctionControlData,
+} from "../../../../utils/Data";
 
 export const Syllabus = () => {
-  const drivingAblilityData = [
-    {
-      label: "Changing Gear",
-    },
-    {
-      label: "Clutch Control",
-    },
-    {
-      label: "Cockpit Drill & Safety Checks",
-    },
-    {
-      label: "Move Off Safely",
-    },
-    {
-      label: "MSPSL Routine",
-    },
-    {
-      label: "Steering",
-    },
-    {
-      label: "Stop Safely",
-    },
-  ];
-
-  const JunctionControlData = [
-    {
-      label: "Approaching",
-    },
-    {
-      label: "Crossroads",
-    },
-  ];
-
-  const drivingAblilityListingData = [
-    {
-      label: "Introduced",
-    },
-    {
-      label: "Under Full Instruction",
-    },
-    {
-      label: "Prompted",
-    },
-    {
-      label: "Seldom Prompted",
-    },
-    {
-      label: "Independent",
-    },
-  ];
   return (
     <div>
       <div>
@@ -115,28 +71,32 @@ export const Syllabus = () => {
 };
 
 export const Summary = () => {
-  const progressData = [
-    {
-      label: "Basic Skills",
-      Percent: "15%",
-    },
-    {
-      label: "Junctions",
-      Percent: "100%",
-    },
-    {
-      label: "Manoeuvers",
-      Percent: "45%",
-    },
-    {
-      label: "Road Use",
-      Percent: "25%",
-    },
-    {
-      label: "Other",
-      Percent: "10%",
-    },
-  ];
+  const [progressValues, setProgressValues] = useState([]);
+
+  useEffect(() => {
+    // Initialize progress values with 0
+    setProgressValues(progressData.map(() => 0));
+
+    // Smoothly update progress values to their respective target values
+    progressData.forEach((item, index) => {
+      const targetPercent = parseInt(item.Percent, 10);
+      let currentPercent = 0;
+
+      const interval = setInterval(() => {
+        currentPercent += 12; // Increment the progress
+        if (currentPercent >= targetPercent) {
+          currentPercent = targetPercent; // Cap at target
+          clearInterval(interval); // Clear interval when done
+        }
+
+        setProgressValues((prevValues) =>
+          prevValues.map((value, idx) =>
+            idx === index ? currentPercent : value
+          )
+        );
+      }, 1); // Adjust interval speed as necessary
+    });
+  }, []);
 
   return (
     <div>
@@ -146,7 +106,9 @@ export const Summary = () => {
         </p>
         {progressData.map((item, index) => {
           const adjustedMarginLeft =
-            item.Percent === "0%" ? "0%" : `calc(${item.Percent} - 5%)`;
+            progressValues[index] === 0
+              ? "0%"
+              : `calc(${progressValues[index]}% - 5%)`;
 
           return (
             <div key={index}>
@@ -155,16 +117,16 @@ export const Summary = () => {
                   {item.label}
                 </p>
                 <p className="font-MonsterratBold text-lg mb-3 mt-5 mx-1 mt font-extrabold">
-                  {item.Percent}
+                  {progressValues[index]}%
                 </p>
               </div>
               <div className="w-full bg-gray-200 rounded-full relative">
                 <div
-                  className="bg-purple-1 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full h-3"
-                  style={{ width: `${item.Percent}` }}
+                  className="bg-purple-1 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full h-3 transition-all duration-300"
+                  style={{ width: `${progressValues[index]}%` }}
                 ></div>
                 <div
-                  className="w-6 h-6 bg-purple-1 top-[-6.4px] absolute rounded-full"
+                  className="w-6 h-6 bg-purple-1 top-[-6.4px] absolute rounded-full transition-all duration-300"
                   style={{ marginLeft: adjustedMarginLeft }}
                 >
                   <div

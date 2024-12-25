@@ -6,10 +6,8 @@ const Button = ({
   label,
   className,
   disabled,
-  textCenter,
   onClick,
   isActive,
-  radio,
 }) => {
   // State to handle the animation trigger when clicked
   const [clicked, setClicked] = useState(false);

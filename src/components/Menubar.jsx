@@ -1,23 +1,16 @@
 import React from "react";
-import { ClipboardIcon, HomeIcon, PhoneIcon, WorldIcon } from "../utils/Icons";
+
 import { useLocation, useNavigate } from "react-router-dom";
-import { Routes } from "../utils/Routes";
+import { MenuTabs } from "../utils/Data";
 
 const Menubar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const tabs = [
-    { path: Routes.parentHome, label: "Home", Icon: HomeIcon },
-    { path: Routes.resources, label: "Resources", Icon: WorldIcon },
-    { path: Routes.contacts, label: "Contacts", Icon: PhoneIcon },
-    { path: Routes.relativeLogs, label: "Relative Logs", Icon: ClipboardIcon },
-  ];
-
   return (
     <div className="fixed bottom-3 left-0 right-0 flex  mx-20 justify-center z-50">
-      <div className="bg-white shadow-lg rounded-3xl flex items-center justify-center gap-10 md:gap-10 py-5 px-8  z-50">
-        {tabs.map(({ path, label, Icon }) => (
+      <div className="bg-white shadow-lg rounded-3xl flex items-center justify-center gap-11 md:gap-12 py-5 px-12  z-50">
+        {MenuTabs.map(({ path, label, Icon }) => (
           <div
             key={path}
             className={`cursor-pointer flex flex-col items-center transition-all duration-300 ease-in-out transform hover:scale-105`}
