@@ -33,11 +33,15 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
 import Pupil from "../screens/instructor/Pupil.jsx";
+import UserVault from "../screens/auth/UserVault.jsx";
+import InstructorSignUp from "../screens/auth/InstructorSignUp.jsx";
 
 export const publicRoutes = [
   { path: Routes.OtpVerification, element: <OtpVerification /> },
   { path: Routes.login, element: <Login /> },
   { path: Routes.signUp, element: <Signup /> },
+  { path: Routes.userVault, element: <UserVault /> },
+  { path: Routes.instructorSignUp, element: <InstructorSignUp /> },
 ];
 
 export const privateRoutes = [

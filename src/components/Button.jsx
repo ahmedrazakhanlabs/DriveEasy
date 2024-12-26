@@ -28,7 +28,7 @@ const Button = ({
     <button
       onClick={handleClick} // Set the click handler
       disabled={disabled}
-      className={`relative bg-purple-1 flex items-center w-full p-3 overflow-hidden
+      className={`relative bg-purple-1 flex  items-center w-full p-3 overflow-hidden
         ${isActive == false && "bg-purple-1 opacity-20"} 
         ${isActive == true && "bg-purple-1"} 
         ${disabled && "opacity-50 pointer-events-none"} 

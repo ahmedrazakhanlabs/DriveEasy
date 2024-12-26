@@ -4,8 +4,9 @@ const Instructor = `/instructor`;
 export const Routes = {
   OtpVerification: `/otp-verfication`,
   login: `/login`,
-  signUp: `/sign-up`,
-
+  signUp: `${Pupils}/sign-up`,
+  instructorSignUp: `${Instructor}/sign-up`,
+  userVault: `/`,
   // Parents Routes
   parentHome: `${Pupils}/home`,
   parentLessons: `${Pupils}/lessons`,
@@ -20,6 +21,6 @@ export const Routes = {
   parentInboxById: (id) => `${Pupils}/inbox/${id}`,
 
   // Instructor Routes
-  InstructorHome: `/`,
+  InstructorHome: `${Instructor}/`,
   instructorPupil: `${Instructor}/pupil`,
 };

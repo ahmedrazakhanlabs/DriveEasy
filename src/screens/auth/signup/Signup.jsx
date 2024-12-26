@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Stepper from "../../../components/Stepper";
 import Button from "../../../components/Button";
+import { Women } from "../../../assets";
 import {
   Section1,
   Section2,
@@ -71,6 +72,7 @@ const Signup = () => {
         <Header
           heading={"Signup Now!"}
           subHeading={"Please signup to continue"}
+          image={Women}
         />
 
         <div className="flex items-center p-5 justify-center">

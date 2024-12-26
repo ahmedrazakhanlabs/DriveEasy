@@ -6,7 +6,11 @@ export const validationSchema = Yup.object({
     .min(2, "First name must be at least 2 characters long")
     .max(50, "First name cannot exceed 50 characters")
     .required("First name is required"),
-
+  fullName: Yup.string()
+    .trim()
+    .min(2, "Full name must be at least 2 characters long")
+    .max(50, "Full name cannot exceed 50 characters")
+    .required("First name is required"),
   lastName: Yup.string()
     .trim()
     .min(2, "Last name must be at least 2 characters long")
@@ -61,4 +65,5 @@ export const validationSchema = Yup.object({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password"), null], "Passwords must match")
     .required("Confirm password is required"),
+  drivingSchoolName: Yup.string().required("Driving School Name is required"),
 });
