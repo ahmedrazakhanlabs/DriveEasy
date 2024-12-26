@@ -12,6 +12,7 @@ import Button from "../../../components/Button";
 import Modal from "../../../components/modals/Modal";
 import CalendarComponent from "../../../components/Calender";
 import { WeekDays, DataGraph } from "./components/Index";
+import IMenubar from "../../../components/IMenubar";
 
 const Home = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -108,8 +109,8 @@ const Home = () => {
   ];
 
   const timeSlots = Array.from(
-    { length: 13 },
-    (_, i) => `${i.toString().padStart(2, "0")}:00`
+    { length: 12 },
+    (_, i) => `${(i + 1).toString().padStart(2, "0")}:00`
   );
 
   const filteredEvents = events.filter(
@@ -131,7 +132,7 @@ const Home = () => {
               currentWeek[6],
               "dd MMM"
             )}`}
-            className="justify-center rounded-full font-bold text-[2.8vw] sm:text-[12px] text-center"
+            className="justify-center rounded-full font-bold text-[2.8vw] min-w-[140px] sm:text-[12px] text-center"
           />
           <span className="cursor-pointer" onClick={handlePrevDay}>
             <LeftIcon />
@@ -170,6 +171,11 @@ const Home = () => {
       <div>
         <DataGraph timeSlots={timeSlots} filteredEvents={filteredEvents} />
       </div>
+      <br />
+      <br />
+      <br />
+      <br />
+      <IMenubar />
     </div>
   );
 };

@@ -13,7 +13,15 @@ import AddContact from "../screens/parent/contacts/subpage/AddContact";
 import Profile from "../screens/parent/Profile";
 import RelativeLogs from "../screens/parent/RelativeLogs";
 import InstructorHome from "../screens/instructor/Home/Home.jsx";
-import { ClipboardIcon, HomeIcon, PhoneIcon, WorldIcon } from "./Icons";
+import {
+  ClipboardIcon,
+  HomeIcon,
+  MessageIcon,
+  PhoneIcon,
+  ProfileIcon,
+  WalletIcon,
+  WorldIcon,
+} from "./Icons";
 import { Routes } from "./Routes";
 import {
   CalenderIcon,
@@ -23,6 +31,8 @@ import {
   ProgressIcon,
 } from "./Icons.jsx";
 import { useNavigate } from "react-router-dom";
+import { Plus } from "lucide-react";
+import Pupil from "../screens/instructor/Pupil.jsx";
 
 export const publicRoutes = [
   { path: Routes.OtpVerification, element: <OtpVerification /> },
@@ -47,6 +57,7 @@ export const privateRoutes = [
   // Instructor Routes
 
   { path: Routes.InstructorHome, element: <InstructorHome /> },
+  { path: Routes.instructorPupil, element: <Pupil /> },
 ];
 
 export const MenuTabs = [
@@ -54,6 +65,14 @@ export const MenuTabs = [
   { path: Routes.resources, label: "Resources", Icon: WorldIcon },
   { path: Routes.contacts, label: "Contacts", Icon: PhoneIcon },
   { path: Routes.relativeLogs, label: "Relative Logs", Icon: ClipboardIcon },
+];
+
+export const InstructorMenuTabs = [
+  { path: Routes.InstructorHome, label: "Diary", Icon: HomeIcon },
+  { path: Routes.instructorPupil, label: "Pupil", Icon: ProfileIcon },
+  { path: "", label: "plus", Icon: Plus },
+  { path: "", label: "Expense", Icon: WalletIcon },
+  { path: "", label: "Message", Icon: MessageIcon },
 ];
 
 export const homeSection1 = (navigate) => [

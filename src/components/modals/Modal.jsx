@@ -16,7 +16,7 @@ const Modal = ({ isOpen, onClose, content }) => {
       onClick={handleOutsideClick}
     >
       <div
-        className={`bg-white p-6 rounded-lg shadow-lg max-h-[90vh]  mx-5  max-w-sm w-full transition-transform transform duration-500 ease-in-out ${
+        className={`bg-white p-6 rounded-2xl shadow-lg max-h-[90vh]  mx-5  max-w-sm w-full transition-transform transform duration-500 ease-in-out ${
           isOpen ? "scale-100" : "scale-50"
         }`}
         onClick={(e) => e.stopPropagation()} // Prevent click event propagation

@@ -46,6 +46,9 @@ export default {
         MonsterratExtraBold: ["Monsterrat-extrabold", "sans-serif"],
         Poppins: ["Poppins", "sans-serif"],
       },
+      boxShadow: {
+        soft: "rgb(116, 116, 116) 0px 11px 22px -3px",
+      },
     },
   },
   plugins: [],
