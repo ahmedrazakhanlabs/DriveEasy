@@ -1,13 +1,31 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Button from "../../components/Button";
 import { InstructorIcon, ProfileIcon } from "../../utils/Icons";
 import Otp from "./components/Otp";
 import { Routes } from "../../utils/Routes";
-import {Link, useNavigate} from "react-router-dom"
- 
+import { Link, useNavigate, useParams } from "react-router-dom";
+import ErrorMessage from "../../components/ErrorMessage";
+
 const OtpVerification = () => {
-  const [userType, setUserType] = useState("pupil");
+  const { key } = useParams();
+  const [userType, setUserType] = useState(
+    atob(key) === "instructor" ? "instructor" : "pupil"
+  );
+  const [pin, setPin] = useState(["", "", "", ""]);
+  const [error, setError] = useState("");
+
   const navigate = useNavigate();
+
+  // Check if pin is complete
+  const isPinComplete = pin.every((digit) => digit !== "");
+
+  useEffect(() => {
+    if (!isPinComplete) {
+      setError("Please enter a valid PIN.");
+    } else {
+      setError("");
+    }
+  }, [pin, isPinComplete]);
 
   return (
     <div className="py-10 px-8 transition duration-200 ease-in-out">
@@ -26,22 +44,20 @@ const OtpVerification = () => {
             <p className="text-sm text-center text-black-1 mb-2 font-Monsterrat font-bold">
               Enter your pin here
             </p>
-            <Otp />
+            <Otp pin={pin} setPin={setPin} />
+            {error && (
+              <ErrorMessage ErrorMessage={error} className={"text-center"} />
+            )}
           </div>
 
           <div className="space-y-2 mx-1">
             <Button
-              onClick={() => setUserType("pupil")}
               isActive={userType === "pupil"}
               label="Pupil or Parent"
               className="rounded-lg"
               prefixIcon={<ProfileIcon />}
             />
             <Button
-              onClick={() => {
-                setUserType("instructor");
-                navigate(Routes.InstructorHome);
-              }}
               isActive={userType === "instructor"}
               label="Instructor"
               className="rounded-lg"
@@ -55,6 +71,7 @@ const OtpVerification = () => {
             radio={true}
             textCenter={true}
             onClick={() => navigate(Routes.login)}
+            disabled={!isPinComplete}
           />
 
           <Link

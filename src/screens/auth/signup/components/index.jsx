@@ -6,6 +6,7 @@ import { validationSchema } from "../../../../utils/ValidationSchema";
 import * as Yup from "yup";
 import Confetti from "react-confetti"; // Import react-confetti
 import { postRequest } from "../../../../helpers/Functions";
+import Loader from "../../../../components/Loader";
 
 export const Section1 = ({ setFormData, formData, setIsNext }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -708,16 +709,7 @@ export const Section7 = ({
           <br />
           <br />
           <br />
-          <div className="dot-spinner ">
-            <div className="dot-spinner__dot"></div>
-            <div className="dot-spinner__dot"></div>
-            <div className="dot-spinner__dot"></div>
-            <div className="dot-spinner__dot"></div>
-            <div className="dot-spinner__dot"></div>
-            <div className="dot-spinner__dot"></div>
-            <div className="dot-spinner__dot"></div>
-            <div className="dot-spinner__dot"></div>
-          </div>
+          <Loader />
           <p className="font-Monsterrat text-[13px] my-4 font-extrabold">
             {loadingText}
           </p>

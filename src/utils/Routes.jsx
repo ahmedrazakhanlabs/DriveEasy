@@ -2,7 +2,7 @@ const Pupils = `/pupils`;
 const Instructor = `/instructor`;
 
 export const Routes = {
-  OtpVerification: `/otp-verfication`,
+  OtpVerification: (key) => `/otp-verfication/${key}`,
   login: `/login`,
   signUp: `${Pupils}/sign-up`,
   instructorSignUp: `${Instructor}/sign-up`,

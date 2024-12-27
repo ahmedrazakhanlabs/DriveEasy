@@ -37,7 +37,7 @@ import UserVault from "../screens/auth/UserVault.jsx";
 import InstructorSignUp from "../screens/auth/InstructorSignUp.jsx";
 
 export const publicRoutes = [
-  { path: Routes.OtpVerification, element: <OtpVerification /> },
+  { path: Routes.OtpVerification(":key"), element: <OtpVerification /> },
   { path: Routes.login, element: <Login /> },
   { path: Routes.signUp, element: <Signup /> },
   { path: Routes.userVault, element: <UserVault /> },
@@ -182,5 +182,44 @@ export const drivingAblilityListingData = [
   },
   {
     label: "Independent",
+  },
+];
+
+export const instructorSignUpFields = [
+  {
+    label: "Driving School Name",
+    type: "text",
+    name: "drivingSchoolName",
+    placeholder: "Enter Driving School Name",
+  },
+  {
+    label: "Full Name",
+    type: "text",
+    name: "fullName",
+    placeholder: "Enter Full Name",
+  },
+  {
+    label: "Email Address",
+    type: "email",
+    name: "email",
+    placeholder: "Enter Email Address",
+  },
+  {
+    label: "Phone Number",
+    type: "number",
+    name: "phoneNumber",
+    placeholder: "Enter Phone Number",
+  },
+  {
+    label: "Password",
+    type: "password",
+    name: "password",
+    placeholder: "Enter Password",
+  },
+  {
+    label: "Confirm Password",
+    type: "password",
+    name: "confirmPassword",
+    placeholder: "Enter Confirm Password",
   },
 ];

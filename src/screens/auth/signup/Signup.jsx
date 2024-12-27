@@ -56,9 +56,11 @@ const Signup = () => {
   };
 
   const navigate = useNavigate();
+  const encodedValue = btoa("pupil"); // Base64 encode the value
+
   const goNext = () => {
     if (section === 7) {
-      navigate(Routes.OtpVerification);
+      navigate(Routes.OtpVerification(encodedValue));
       return;
     }
     if (section < 7) setSection(section + 1);

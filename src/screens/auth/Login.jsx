@@ -5,12 +5,17 @@ import Button from "../../components/Button";
 import { Link, useNavigate } from "react-router-dom";
 import { Routes } from "../../utils/Routes";
 import Header from "./components/Header";
+import { Women } from "../../assets";
 
 const Login = () => {
   const navigate = useNavigate();
   return (
     <div>
-      <Header heading={"Login Now!"} subHeading={"Please login to continue"} />
+      <Header
+        heading={"Login Now!"}
+        subHeading={"Please login to continue"}
+        image={Women}
+      />
 
       <div className="my-7 mx-5">
         <Input

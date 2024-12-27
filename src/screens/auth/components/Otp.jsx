@@ -1,10 +1,8 @@
 import React, { useRef, useState } from 'react'
 
-const Otp = () => {
-  const [pin, setPin] = useState(["", "", "", ""]);
-
+const Otp = ({ pin, setPin }) => {
   const inputRefs = useRef([]);
-  
+
   const handlePinChange = (index, value) => {
     if (value.length > 1) return; // Prevent multiple digits
 
@@ -24,7 +22,7 @@ const Otp = () => {
     }
   };
   return (
-   <div className="flex justify-center gap-4">
+    <div className="flex justify-center gap-4">
       {pin.map((digit, index) => (
         <input
           key={index}

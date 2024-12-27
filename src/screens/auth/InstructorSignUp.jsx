@@ -1,208 +1,188 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
-import * as Yup from "yup";
-import { Women } from "../../assets";
-import Header from "./components/Header";
 import { useNavigate } from "react-router-dom";
 import InputTwo from "../../components/InputTwo";
-import { validationSchema } from "../../utils/ValidationSchema"; // Assuming this is where your Yup schema is defined
 import Button from "../../components/Button";
+import { MenWithCar, Women } from "../../assets";
+import Header from "./components/Header";
 import { Routes } from "../../utils/Routes";
+import { validationSchema } from "../../utils/ValidationSchema";
+import * as Yup from "yup";
+
+import { instructorSignUpFields } from "../../utils/Data";
+import Confetti from "react-confetti"; // Import react-confetti
+import { postRequest } from "../../helpers/Functions";
+import Loader from "../../components/Loader";
 
 const InstructorSignUp = () => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
+  const [hasConfetti, setHasConfetti] = useState(false);
+  const [loadingText, setLoadingText] = useState("It will take a moment");
+  const loadingTexts = [
+    "It will take a moment",
+    "Loading",
+    "Please hold on, your request is being processed",
+  ];
+  const [loading, setLoading] = useState(false);
 
-  // Formik logic using useFormik hook
+  const Signup = async () => {
+    setLoading(true);
+    try {
+      const response = await postRequest("pupil/register", data);
+      console.log("Registration Successful:", response);
+      setLoading(false);
+    } catch (error) {
+      if (error.response?.data) {
+        setTimeout(() => {
+          setLoading(false);
+        }, 2000);
+      }
+    }
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  };
+
   const formik = useFormik({
     initialValues: {
-      drivingSchoolName: "",
+      drivingSchoolName: "", // Default empty values for form fields
       fullName: "",
-      Email: "",
+      email: "",
       phoneNumber: "",
       password: "",
       confirmPassword: "",
     },
     validationSchema: Yup.object({
-      drivingSchoolName: validationSchema.fields.drivingSchoolName,
-      fullName: validationSchema.fields.fullName,
-      phoneNumber: validationSchema.fields.phoneNumber,
-      password: validationSchema.fields.password,
-      confirmPassword: validationSchema.fields.confirmPassword,
-      Email: validationSchema.fields.emailAddress,
+      drivingSchoolName: validationSchema.fields.drivingSchoolName, // Use only the postalCode validation
+      fullName: validationSchema.fields.fullName, // Use only the postalCode validation
+      email: validationSchema.fields.emailAddress, // Use only the postalCode validation
+      phoneNumber: validationSchema.fields.phoneNumber, // Use only the postalCode validation
+      password: validationSchema.fields.password, // Use only the postalCode validation
+      confirmPassword: validationSchema.fields.confirmPassword, // Use only the postalCode validation
     }),
-    validateOnMount: true, // Validation on mount to display errors initially
+    validateOnMount: true,
     onSubmit: (values) => {
-      console.log("Form Submitted:", values);
-      // Handle form submission logic (e.g., API call)
-      // navigate("/some-path"); // Redirect after form submission
+      Signup();
+      setHasConfetti(true);
+      // setTimeout(() => setHasConfetti(false), 8000);
+
+      // Change loading text every 2 seconds
+      const intervalId = setInterval(() => {
+        setLoadingText((prevText) => {
+          const currentIndex = loadingTexts.indexOf(prevText);
+          const nextIndex = (currentIndex + 1) % loadingTexts.length;
+          return loadingTexts[nextIndex];
+        });
+      }, 2000);
+
+      // Clear interval when loading is done
+      return () => clearInterval(intervalId);
     },
   });
 
-  // Effect to handle form submission when component mounts
   useEffect(() => {
     setIsVisible(true);
-    formik.handleSubmit();
+    formik.handleSubmit(); // Submit form on mount to validate immediately
   }, []);
-
-  // Effect to check form errors and update the isNext status
-  useEffect(() => {
-    const isFormInvalid = Object.keys(formik.errors).length > 0;
-    console.log("Form invalid:", !isFormInvalid);
-    console.log("formik.errors:", formik.errors);
-    // If there are errors, set isNext to false, otherwise true
-  }, [formik.errors]);
+  const encodedValue = btoa("instructor"); // Base64 encode the value
 
   return (
-    <div className="relative">
+    <div className=" relative">
       <div className="fixed top-0 bg-white z-20 md:min-w-[436px] w-[100%] md:w-[50%] lg:w-[30%]">
         <Header
-          heading={"Signup Now!"}
-          subHeading={"Please signup to continue"}
+          heading="Signup Now!"
+          subHeading="Please signup to continue"
           image={Women}
         />
-
-        <div
-          className={`transition-all duration-700 overflow-auto transform ${
-            isVisible
-              ? "opacity-100 translate-x-0"
-              : "opacity-0 -translate-x-full"
-          }`}
-        >
-          <form className="mx-4 my-3" onSubmit={formik.handleSubmit}>
-            <InputTwo
-              label={"Driving School Name"}
-              type={"text"}
-              placeholder={"Enter Driving School Name"}
-              name={"drivingSchoolName"}
-              value={formik.values.drivingSchoolName}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`${
-                formik.errors.drivingSchoolName &&
-                formik.touched.drivingSchoolName
-                  ? "border-red-500"
-                  : ""
+      </div>
+      <div className="">
+        {!loading && !hasConfetti && (
+          <>
+            <div
+              className={`transition-all mt-[173px]  pb-12 duration-700 mb-28 transform ${
+                isVisible
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 -translate-x-full"
               }`}
-            />
-            {formik.errors.drivingSchoolName &&
-              formik.touched.drivingSchoolName && (
-                <div className="font-Monsterrat font-bold text-[12px] mb-1 text-[#dc1c1c] opacity-60">
-                  {formik.errors.drivingSchoolName}
+            >
+              <form className="mx-4 my-3" onSubmit={formik.handleSubmit}>
+                {instructorSignUpFields.map(
+                  ({ label, type, name, placeholder }) => (
+                    <div key={name}>
+                      <InputTwo
+                        label={label}
+                        type={type}
+                        name={name}
+                        placeholder={placeholder}
+                        value={formik.values[name]}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        className={`my-1`}
+                      />
+                      {formik.errors[name] && formik.touched[name] && (
+                        <div className="font-Monsterrat font-bold text-[12px] mb-1 text-[#dc1c1c] opacity-60">
+                          {formik.errors[name]}
+                        </div>
+                      )}
+                    </div>
+                  )
+                )}
+
+                <div className="mx-10 my-3">
+                  <Button
+                    type="submit"
+                    disabled={!formik.isValid}
+                    label="Sign Up"
+                    className="justify-center rounded-2xl"
+                  />
                 </div>
-              )}
+              </form>
+            </div>
+          </>
+        )}
 
-            <InputTwo
-              label={"Full Name"}
-              type={"text"}
-              placeholder={"Enter Full Name"}
-              name={"fullName"}
-              value={formik.values.fullName}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`${
-                formik.errors.fullName && formik.touched.fullName
-                  ? "border-red-500"
-                  : ""
-              }`}
-            />
-            {formik.errors.fullName && formik.touched.fullName && (
-              <div className="font-Monsterrat font-bold text-[12px] mb-1 text-[#dc1c1c] opacity-60">
-                {formik.errors.fullName}
-              </div>
-            )}
-
-            <InputTwo
-              label={"Email Address"}
-              type={"email"}
-              placeholder={"Enter Email Address"}
-              name={"Email"}
-              value={formik.values.Email}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`${
-                formik.errors.Email && formik.touched.Email
-                  ? "border-red-500"
-                  : ""
-              }`}
-            />
-            {formik.errors.Email && formik.touched.Email && (
-              <div className="font-Monsterrat font-bold text-[12px] mb-1 text-[#dc1c1c] opacity-60">
-                {formik.errors.Email}
-              </div>
-            )}
-
-            <InputTwo
-              label={"Phone Number"}
-              type={"number"}
-              placeholder={"Enter Phone Number"}
-              name={"phoneNumber"}
-              value={formik.values.phoneNumber}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`${
-                formik.errors.phoneNumber && formik.touched.phoneNumber
-                  ? "border-red-500"
-                  : ""
-              }`}
-            />
-            {formik.errors.phoneNumber && formik.touched.phoneNumber && (
-              <div className="font-Monsterrat font-bold text-[12px] mb-1 text-[#dc1c1c] opacity-60">
-                {formik.errors.phoneNumber}
-              </div>
-            )}
-
-            <InputTwo
-              label={"Password"}
-              type={"password"}
-              placeholder={"Enter Password"}
-              name={"password"}
-              value={formik.values.password}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`${
-                formik.errors.password && formik.touched.password
-                  ? "border-red-500"
-                  : ""
-              }`}
-            />
-            {formik.errors.password && formik.touched.password && (
-              <div className="font-Monsterrat font-bold text-[12px] mb-1 text-[#dc1c1c] opacity-60">
-                {formik.errors.password}
-              </div>
-            )}
-
-            <InputTwo
-              label={"Confirm Password"}
-              type={"password"}
-              placeholder={"Enter Confirm Password"}
-              name={"confirmPassword"}
-              value={formik.values.confirmPassword}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`${
-                formik.errors.confirmPassword && formik.touched.confirmPassword
-                  ? "border-red-500"
-                  : ""
-              }`}
-            />
-            {formik.errors.confirmPassword &&
-              formik.touched.confirmPassword && (
-                <div className="font-Monsterrat font-bold text-[12px] mb-1 text-[#dc1c1c] opacity-60">
-                  {formik.errors.confirmPassword}
-                </div>
-              )}
-            <div className="mx-10 my-3">
+        {!loading && hasConfetti && (
+          <div className="absolute z-50 mt-[-270px]">
+            <Confetti />
+          </div>
+        )}
+        {!loading && hasConfetti && (
+          <>
+            <img src={MenWithCar} alt="" className="mt-[200px]" />
+            <h2 className="font-MonsterratBold font-bold text-center text-xl">
+              Congratulations!
+            </h2>
+            <p className="font-Monsterrat font-bold text-center text-[15px]">
+              Your Account has been created.
+            </p>
+            <div className="mx-20 my-5">
               <Button
-                type="submit"
-                disabled={formik.errors.length > 0}
-                label="Sign Up"
-                onClick={() => navigate(Routes.OtpVerification)}
+                label="Next"
                 className={"justify-center rounded-2xl"}
+                onClick={() => navigate(Routes.OtpVerification(encodedValue))}
               />
             </div>
-          </form>
-        </div>
+          </>
+        )}
+        {loading && (
+          <div className="flex flex-col items-center justify-center py-[30px]">
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <Loader className={``} />
+
+            <p className="font-Monsterrat text-[13px] my-4 font-extrabold">
+              {loadingText}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

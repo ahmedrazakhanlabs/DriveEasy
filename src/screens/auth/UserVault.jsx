@@ -6,7 +6,7 @@ import { MenWithCar } from "../../assets";
 import { useNavigate } from "react-router-dom";
 import { Routes } from "../../utils/Routes";
 const UserVault = () => {
-  const [roles, setRoles] = useState({ instructor: false, pupil: false });
+  const [roles, setRoles] = useState({ instructor: true, pupil: false });
 
   const handleRoleSelection = (role) => {
     setRoles((prev) => ({
@@ -30,12 +30,6 @@ const UserVault = () => {
         }
       />
       <div className="mx-3">
-        <div className="flex items-center gap-2 py-4">
-          <button className="p-1">
-            <ChevronLeft className="h-5 w-5 text-gray-400" />
-          </button>
-        </div>
-
         <div className="mt-6 space-y-4">
           <div>
             <h1 className="text-xl font-Monsterrat font-bold text-center">
