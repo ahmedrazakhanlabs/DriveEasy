@@ -49,6 +49,19 @@ export default {
       boxShadow: {
         soft: "rgb(116, 116, 116) 0px 11px 22px -3px",
       },
+      animation: {
+        upDown: "moveUpDown 2s infinite ease-in-out",
+      },
+      keyframes: {
+        moveUpDown: {
+          "0%, 100%": {
+            transform: "translateY(0)",
+          },
+          "50%": {
+            transform: "translateY(-10px)",
+          },
+        },
+      },
     },
   },
   plugins: [],

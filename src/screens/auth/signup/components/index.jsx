@@ -7,7 +7,11 @@ import * as Yup from "yup";
 import Confetti from "react-confetti"; // Import react-confetti
 import { postRequest } from "../../../../helpers/Functions";
 import Loader from "../../../../components/Loader";
-
+import { fakeInstructorData } from "../../../../utils/Data";
+import Button from "../../../../components/Button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import Card from "../../../../components/Card";
+import Pagination from "../../../../components/Pagination";
 export const Section1 = ({ setFormData, formData, setIsNext }) => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -75,9 +79,9 @@ export const Section1 = ({ setFormData, formData, setIsNext }) => {
 export const Section2 = ({ setFormData, formData, setIsNext }) => {
   const [isVisible, setIsVisible] = useState(false);
   const lessons = [
-    "I want to learn drive",
-    "I want refresher learner",
-    "I have a test booked within 14 days",
+    { label: "I want to learn drive", value: "learnDrive" },
+    { label: "I want refresher learner", value: "refresherLearner" },
+    { label: "I have a test booked within 14 days", value: "testPreparation" },
   ];
 
   useEffect(() => {
@@ -131,11 +135,13 @@ export const Section2 = ({ setFormData, formData, setIsNext }) => {
                 key={index}
                 type="button"
                 className={`w-full text-left font-Monsterrat font-semibold text-[13px] p-4 rounded-lg transition-colors ${buttonClass(
-                  lesson
+                  lesson.value
                 )}`}
-                onClick={() => formik.setFieldValue("selectedLesson", lesson)} // Update Formik field value
+                onClick={() =>
+                  formik.setFieldValue("selectedLesson", lesson.value)
+                } // Update Formik field value
               >
-                {lesson}
+                {lesson.label}
               </button>
             ))}
             {formik.errors.selectedLesson && formik.touched.selectedLesson && (
@@ -156,18 +162,14 @@ export const Section2 = ({ setFormData, formData, setIsNext }) => {
 
 export const Section3 = ({ setFormData, formData, setIsNext }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [instructor, setInstructor] = useState({ id: 1, name: "Jimmy Tim" });
-
-  const packages = [
-    { id: 1, hours: 5, price: 59.5 },
-    { id: 2, hours: 10, price: 109.0 },
-    { id: 3, hours: 20, price: 199.0 },
-  ];
+  const [selectedInstructor, setSelectedInstructor] = useState(
+    JSON.parse(localStorage.getItem("selectedInstructor")) || null
+  );
 
   // Yup Validation Schema
   const validationSchema = Yup.object({
     selectedType: Yup.string().required("Please select a lesson type."),
-    selectedPackage: Yup.number().required("Please select a package."),
+    selectedPackage: Yup.object().required("Please select a package."),
   });
 
   const formik = useFormik({
@@ -190,8 +192,16 @@ export const Section3 = ({ setFormData, formData, setIsNext }) => {
     const isFormInvalid = Object.keys(formik.errors).length > 0;
     setIsNext(!isFormInvalid);
     setFormData((prev) => ({ ...prev, ...formik.values }));
-    setFormData((prev) => ({ ...prev, instructor: instructor.name }));
+    setFormData((prev) => ({ ...prev, instructor: selectedInstructor?.name }));
   }, [formik.errors, formik.values, setIsNext, setFormData]);
+
+  // Function to handle instructor selection
+  const handleInstructorSelect = (instructor) => {
+    setSelectedInstructor(instructor);
+    localStorage.setItem("selectedInstructor", JSON.stringify(instructor));
+  };
+  console.log("formik.errors", formik.errors);
+  console.log("formik.values", formik.values);
 
   return (
     <div
@@ -199,115 +209,130 @@ export const Section3 = ({ setFormData, formData, setIsNext }) => {
         isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full"
       }`}
     >
-      <form className=" space-y-4" onSubmit={formik.handleSubmit}>
-        <div className="mb-8">
-          <h2 className="text-lg font-Monsterrat font-bold mb-4">
-            What type of lessons do you want?
-          </h2>
-          <div className="flex gap-4 justify-center">
-            {["Manual", "Automatic"].map((type) => (
-              <button
-                key={type}
-                type="button"
-                onClick={() => formik.setFieldValue("selectedType", type)}
-                className={`px-6 py-2 font-Monsterrat font-bold text-[14px] rounded-lg transition-colors ${
-                  formik.values.selectedType === type
-                    ? "bg-purple-1 text-white"
-                    : "bg-purple-5 hover:bg-[#e9e3ff]"
-                }`}
-              >
-                {type}
-              </button>
-            ))}
-          </div>
-          {formik.errors.selectedType && formik.touched.selectedType && (
-            <ErrorMessage
-              ErrorMessage={formik.errors.selectedType}
-              className={"text-center mt-3"}
-            />
-          )}
-        </div>
+      {!selectedInstructor && (
+        <div className=" text-gray-900">
+          <header className="px-6 py-4 ">
+            <div className="">
+              <h2 className="text-xl mb-6 text-center font-Monsterrat font-bold">
+                All Instructors
+              </h2>
 
-        {/* Instructor Section */}
-        <div className="mb-8">
-          <h2 className="text-[15px] font-Monsterrat font-bold mb-4">
-            Your Instructor
-          </h2>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-purple-5 rounded-full flex items-center justify-center">
-                <span className="text-purple-1 font-Monsterrat font-bold">
-                  JT
+              <Card
+                data={fakeInstructorData}
+                onSelect={handleInstructorSelect}
+              />
+            </div>
+          </header>
+        </div>
+      )}
+
+      {selectedInstructor && (
+        <form className={`space-y-4`} onSubmit={formik.handleSubmit}>
+          <div className="mb-8">
+            <div className="flex items-center mb-4 gap-2">
+              <ChevronLeft
+                onClick={() => setSelectedInstructor(null)}
+                className="h-5 w-5 cursor-pointer"
+              />
+              <h2 className="text-lg font-Monsterrat font-bold">
+                What type of lessons do you want?
+              </h2>
+            </div>
+            <div className="flex gap-4 justify-center">
+              {["Manual", "Automatic"].map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => formik.setFieldValue("selectedType", type)}
+                  className={`px-6 py-2 font-Monsterrat font-bold text-[14px] rounded-lg transition-colors ${
+                    formik.values.selectedType === type
+                      ? "bg-purple-1 text-white"
+                      : "bg-purple-5 hover:bg-[#e9e3ff]"
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
+            {formik.errors.selectedType && formik.touched.selectedType && (
+              <ErrorMessage
+                ErrorMessage={formik.errors.selectedType}
+                className={"text-center mt-3"}
+              />
+            )}
+          </div>
+          <div className="mb-8">
+            <h2 className="text-[15px] font-Monsterrat font-bold mb-4">
+              Your Instructor
+            </h2>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-purple-5 rounded-full flex items-center justify-center">
+                  <span className="text-purple-1 font-Monsterrat font-bold">
+                    {selectedInstructor.name
+                      .split(" ")
+                      .map((word) => word.charAt(0).toUpperCase())
+                      .join("")}
+                  </span>
+                </div>
+                <span className="font-Monsterrat font-bold text-[14px]">
+                  {selectedInstructor.name}
                 </span>
               </div>
-              <span className="font-Monsterrat font-bold text-[14px]">
-                Jimmy Tim
-              </span>
-            </div>
-            <div className="bg-purple-5 px-4 py-2 rounded-lg">
-              <span className="font-Monsterrat font-bold text-[14px]">
-                $59.50/hr
-              </span>
+              <div className="bg-purple-5 px-4 py-2 rounded-lg">
+                <span className="font-Monsterrat font-bold text-[14px]">
+                  ${selectedInstructor.perHour}/hr
+                </span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Package Selection */}
-        <div>
-          <h2 className="font-Monsterrat font-bold text-lg mb-4">
-            Choose Your Package
-          </h2>
-          <div className="grid grid-cols-3 gap-4">
-            {packages.map((pkg) => (
-              <button
-                key={pkg.id}
-                type="button"
-                onClick={() => formik.setFieldValue("selectedPackage", pkg.id)}
-                className={`p-6 rounded-lg transition-colors ${
-                  formik.values.selectedPackage === pkg.id
-                    ? "bg-purple-1 text-white"
-                    : "bg-purple-5 hover:bg-[#e9e3ff]"
-                }`}
-              >
-                <div className="w-8 h-8 mb-2 rounded-full bg-white flex items-center text-[12px] justify-center ml-[7px] sm:ml-[14px]">
-                  <div
-                    className={
-                      formik.values.selectedPackage === pkg.id
-                        ? "text-purple-1 text-center font-Monsterrat font-bold"
-                        : "text-center text-black font-Monsterrat font-bold"
-                    }
-                  >
-                    {pkg.id}
+          <div>
+            <h2 className="font-Monsterrat font-bold text-lg mb-4">
+              Choose Your Package
+            </h2>
+            <div className="grid grid-cols-3 gap-4">
+              {selectedInstructor?.packages?.map((pkg) => (
+                <button
+                  key={pkg.id}
+                  type="button"
+                  onClick={() => formik.setFieldValue("selectedPackage", pkg)}
+                  className={`p-6 rounded-lg transition-colors flex items-center flex-col ${
+                    formik.values.selectedPackage.id === pkg.id
+                      ? "bg-purple-1 text-white"
+                      : "bg-purple-5 hover:bg-[#e9e3ff]"
+                  }`}
+                >
+                  <div className="w-8 h-8 mb-2 rounded-full bg-white flex items-center text-[12px] justify-center">
+                    <div
+                      className={
+                        formik.values.selectedPackage.id === pkg.id
+                          ? "text-purple-1 text-center font-Monsterrat font-bold"
+                          : "text-center text-black font-Monsterrat font-bold"
+                      }
+                    >
+                      {pkg.id}
+                    </div>
                   </div>
-                </div>
-                <div className="text-[12px] mb-2 font-Monsterrat font-bold">
-                  {pkg.hours} hours
-                </div>
-                <div className="text-xl font-Monsterrat font-bold">
-                  ${pkg.price}
-                </div>
-              </button>
-            ))}
+                  <div className="text-[12px] mb-2 font-Monsterrat font-bold">
+                    {pkg.hours} hours
+                  </div>
+                  <div className="text-xl font-Monsterrat font-bold">
+                    ${pkg.price}
+                  </div>
+                </button>
+              ))}
+            </div>
+            {formik.errors.selectedPackage &&
+              formik.touched.selectedPackage && (
+                <ErrorMessage
+                  ErrorMessage={formik.errors.selectedPackage}
+                  className={"text-center mt-3"}
+                />
+              )}
           </div>
-          {formik.errors.selectedPackage && formik.touched.selectedPackage && (
-            <ErrorMessage
-              ErrorMessage={formik.errors.selectedPackage}
-              className={"text-center mt-3"}
-            />
-          )}
-        </div>
-
-        {/* Submit Button */}
-        {/* <div className="mt-8">
-          <button
-            type="button"
-            onClick={formik.handleSubmit}
-            className="bg-purple-1 text-white p-4 rounded-lg"
-          >
-            Submit
-          </button>
-        </div> */}
-      </form>
+        </form>
+      )}
     </div>
   );
 };
@@ -321,6 +346,9 @@ export const Section4 = ({ setFormData, formData, setIsNext, errorText }) => {
       lastName: validationSchema.fields.lastName,
       phoneNumber: validationSchema.fields.phoneNumber,
       emailAddress: validationSchema.fields.emailAddress,
+      dateOfBirth: validationSchema.fields.dateOfBirth,
+      billingAddress: validationSchema.fields.address,
+      pickupAddress: validationSchema.fields.address,
     }),
     validateOnMount: true,
     onSubmit: (values) => {
@@ -355,11 +383,26 @@ export const Section4 = ({ setFormData, formData, setIsNext, errorText }) => {
         {[
           { label: "Learner first name", name: "firstName", type: "text" },
           { label: "Learner last name", name: "lastName", type: "text" },
-          { label: "Learner mobile number", name: "phoneNumber", type: "text" },
+          {
+            label: "Learner mobile number",
+            name: "phoneNumber",
+            type: "number",
+          },
+          { label: "Learner Date Of Birth", name: "dateOfBirth", type: "date" },
           {
             label: "Learner email address",
             name: "emailAddress",
             type: "email",
+          },
+          {
+            label: "Learner Pickup Address",
+            name: "pickupAddress",
+            type: "text",
+          },
+          {
+            label: "Learner Billing Address",
+            name: "billingAddress",
+            type: "text",
           },
         ].map(({ label, name, type }) => (
           <div key={name} className="space-y-2">
@@ -425,7 +468,7 @@ export const Section5 = ({ setFormData, formData, setIsNext }) => {
     // Synchronize formData with parent component in real-time
     setFormData((prev) => ({ ...prev, ...formik.values }));
   }, [formik.errors, formik.values, setIsNext, setFormData]);
-
+  const bookingFee = 10;
   return (
     <div
       className={`transition-all duration-700 transform ${
@@ -438,9 +481,13 @@ export const Section5 = ({ setFormData, formData, setIsNext }) => {
         <div className="space-y-4">
           {/* Lesson Price */}
           <div className="flex justify-between items-center">
-            <span className="font-Monsterrat font-bold ">lesson 2hrs</span>
+            <span className="font-Monsterrat font-bold ">
+              lesson {formData.selectedPackage.hours}
+            </span>
             <div className="bg-purple-1 text-white px-4 py-2 rounded-lg">
-              <span className="font-medium">${199}</span>
+              <span className="font-medium">
+                ${formData.selectedPackage.price}
+              </span>
             </div>
           </div>
 
@@ -448,7 +495,7 @@ export const Section5 = ({ setFormData, formData, setIsNext }) => {
           <div className="flex justify-between items-center">
             <span className="font-Monsterrat font-bold ">Booking fee</span>
             <div className="bg-purple-1 text-white px-4 py-2 rounded-lg">
-              <span className="font-medium">${1}</span>
+              <span className="font-medium">${bookingFee}</span>
             </div>
           </div>
 
@@ -459,7 +506,9 @@ export const Section5 = ({ setFormData, formData, setIsNext }) => {
           <div className="flex justify-between items-center">
             <span className="font-Monsterrat font-bold  ">Total</span>
             <div className="bg-purple-1 text-white px-4 py-2 rounded-lg">
-              <span className="font-medium">${200}</span>
+              <span className="font-medium">
+                ${bookingFee + formData.selectedPackage.price}
+              </span>
             </div>
           </div>
         </div>
@@ -618,13 +667,11 @@ export const Section7 = ({
     password: formData.password,
     profilePicture: "https://example.com/profile.jpg",
     phoneNumber: formData.phoneNumber,
-    dob: "1990-01-01T00:00:00Z",
-    pickupAddress: "123 Street Name, City, Country",
-    billingAddress: "456 Another Street, City, Country",
+    dob: formData.dateOfBirth,
+    pickupAddress: formData.pickupAddress,
+    billingAddress: formData.billingAddress,
     postalCode: formData.postalCode,
-    lessonsType: formData.selectedType,
-    instructor: formData.instructor,
-    plan: formData.selectedPackage,
+
     cardDetails: {
       cardNo: formData.cardNumber,
       expiry: formData.expiryDate,
@@ -633,6 +680,16 @@ export const Section7 = ({
     },
   };
 
+  const bookingData = {
+    instructorId: formData.instructor,
+    bookingType: formData.selectedLesson,
+    package: {
+      hours: formData.selectedPackage.time,
+      price: formData.selectedPackage.price,
+    },
+    lessonsType: formData.selectedType,
+    date: formData.bookingDate,
+  };
   const loadingTexts = [
     "It will take a moment",
     "Loading",

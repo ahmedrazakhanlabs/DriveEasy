@@ -6,6 +6,11 @@ export const validationSchema = Yup.object({
     .min(2, "First name must be at least 2 characters long")
     .max(50, "First name cannot exceed 50 characters")
     .required("First name is required"),
+  address: Yup.string()
+    .trim()
+    .min(2, "Address must be at least 2 characters long")
+    .max(50, "Address cannot exceed 50 characters")
+    .required("Address name is required"),
   fullName: Yup.string()
     .trim()
     .min(2, "Full name must be at least 2 characters long")
@@ -61,6 +66,14 @@ export const validationSchema = Yup.object({
       "Password must contain at least one uppercase letter, one number, and one special character"
     )
     .required("Password is required"),
+  dateOfBirth: Yup.string()
+    .required("Date of birth is required")
+    .matches(/^\d{4}-\d{2}-\d{2}$/, "Date must be in the format YYYY-MM-DD")
+    .test(
+      "is-valid-date",
+      "Date of birth must be a valid date",
+      (value) => !value || !isNaN(Date.parse(value))
+    ),
 
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password"), null], "Passwords must match")

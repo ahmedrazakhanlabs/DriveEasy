@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Stepper from "../../../components/Stepper";
 import Button from "../../../components/Button";
 import { Women } from "../../../assets";
@@ -47,9 +47,26 @@ const Signup = () => {
     instructor: "",
     password: "",
     confirmPassword: "",
+    dateOfBirth: "",
+    billingAddress: "",
+    pickupAddress: "",
   });
 
   console.log("formData", formData);
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      const message =
+        "Are you sure you want to leave? You may lose unsaved changes.";
+      event.returnValue = message; // Standard for most browsers
+      return message; // For some browsers like Chrome
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    localStorage.removeItem("selectedInstructor");
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   const goBack = () => {
     if (section > 1) setSection(section - 1);

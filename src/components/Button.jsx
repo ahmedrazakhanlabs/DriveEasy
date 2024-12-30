@@ -7,6 +7,7 @@ const Button = ({
   className,
   disabled,
   onClick,
+  type,
   isActive,
 }) => {
   // State to handle the animation trigger when clicked
@@ -28,6 +29,7 @@ const Button = ({
     <button
       onClick={handleClick} // Set the click handler
       disabled={disabled}
+      type={type}
       className={`relative bg-purple-1 flex  items-center w-full p-3 overflow-hidden
         ${isActive == false && "bg-purple-1 opacity-20"} 
         ${isActive == true && "bg-purple-1"} 
