@@ -15,6 +15,7 @@ import Header from "../components/Header";
 import { Routes } from "../../../utils/Routes";
 
 import { useNavigate } from "react-router-dom";
+import Modal from "../../../components/modals/Modal";
 
 const sections = [
   Section1,
@@ -44,12 +45,13 @@ const Signup = () => {
     cardName: "",
     selectedType: "",
     selectedPackage: "",
-    instructor: "",
+    instructorId: "",
     password: "",
     confirmPassword: "",
     dateOfBirth: "",
     billingAddress: "",
     pickupAddress: "",
+    bookingDate: "",
   });
 
   console.log("formData", formData);
@@ -84,9 +86,18 @@ const Signup = () => {
   };
 
   const CurrentSection = sections[section - 1];
+  const [isModalOpen, setModalOpen] = useState(false);
 
+  const openModal = () => setModalOpen(true);
+  const [content, setContent] = useState(<></>);
+  const closeModal = () => setModalOpen(false);
   return (
     <div className="relative">
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        content={<>{content}</>}
+      />
       <div className="fixed top-0 bg-white z-20 md:min-w-[436px] w-[100%] md:w-[50%] lg:w-[30%]">
         <Header
           heading={"Signup Now!"}
@@ -101,8 +112,11 @@ const Signup = () => {
       <div className="transition-all duration-500 px-5 mt-[250px] ">
         <CurrentSection
           setFormData={setFormData}
+          openModal={openModal}
+          closeModal={closeModal}
           formData={formData}
           setIsNext={setIsNext}
+          setContent={setContent}
           setSection={setSection}
           errorText={errorText}
           setErrorText={setErrorText}

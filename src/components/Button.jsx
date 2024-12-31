@@ -8,6 +8,7 @@ const Button = ({
   disabled,
   onClick,
   type,
+  id,
   isActive,
 }) => {
   // State to handle the animation trigger when clicked
@@ -27,6 +28,7 @@ const Button = ({
 
   return (
     <button
+      id={id}
       onClick={handleClick} // Set the click handler
       disabled={disabled}
       type={type}
@@ -46,7 +48,7 @@ const Button = ({
       {prefixIcon && <span className="pb-1">{prefixIcon}</span>}
       {label && (
         <div
-          className={`ml-2 font-Monsterrat text-center text-white`}
+          className={`ml-2 flex items-center  font-Monsterrat text-center text-white`}
           style={{ letterSpacing: "1px" }}
         >
           {label}

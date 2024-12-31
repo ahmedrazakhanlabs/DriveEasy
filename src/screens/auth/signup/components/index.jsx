@@ -5,13 +5,21 @@ import ErrorMessage from "../../../../components/ErrorMessage";
 import { validationSchema } from "../../../../utils/ValidationSchema";
 import * as Yup from "yup";
 import Confetti from "react-confetti"; // Import react-confetti
-import { postRequest } from "../../../../helpers/Functions";
+import { formatDate, postRequest } from "../../../../helpers/Functions";
 import Loader from "../../../../components/Loader";
-import { fakeInstructorData } from "../../../../utils/Data";
+import {
+  fakeInstructorData,
+  signUpDropdownItems,
+} from "../../../../utils/Data";
 import Button from "../../../../components/Button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Card from "../../../../components/Card";
-import Pagination from "../../../../components/Pagination";
+
+import DropdownButton from "../../../../components/DropdownButton";
+import { CalenderIcon2 } from "../../../../utils/Icons";
+import Modal from "../../../../components/modals/Modal";
+import CalendarComponent from "../../../../components/Calender";
+import { format } from "date-fns";
 export const Section1 = ({ setFormData, formData, setIsNext }) => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -75,7 +83,6 @@ export const Section1 = ({ setFormData, formData, setIsNext }) => {
     </div>
   );
 };
-
 export const Section2 = ({ setFormData, formData, setIsNext }) => {
   const [isVisible, setIsVisible] = useState(false);
   const lessons = [
@@ -160,13 +167,21 @@ export const Section2 = ({ setFormData, formData, setIsNext }) => {
   );
 };
 
-export const Section3 = ({ setFormData, formData, setIsNext }) => {
+export const Section3 = ({
+  setFormData,
+  formData,
+  setIsNext,
+  openModal,
+  closeModal,
+  setContent,
+}) => {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedInstructor, setSelectedInstructor] = useState(
     JSON.parse(localStorage.getItem("selectedInstructor")) || null
   );
+  const [bookingDate, setBookingDate] = useState(new Date());
+  const [drivingLevel, setDrivingLevel] = useState("All");
 
-  // Yup Validation Schema
   const validationSchema = Yup.object({
     selectedType: Yup.string().required("Please select a lesson type."),
     selectedPackage: Yup.object().required("Please select a package."),
@@ -175,33 +190,49 @@ export const Section3 = ({ setFormData, formData, setIsNext }) => {
   const formik = useFormik({
     initialValues: formData,
     validationSchema,
-    validateOnMount: true, // Ensure validation occurs on mount
-    validateOnChange: true, // Enable validation on change
-    validateOnBlur: true, // Enable validation on blur
     onSubmit: (values) => {
-      setFormData((prev) => ({ ...prev, ...values }));
+      setFormData((prev) => ({
+        ...prev,
+        ...values,
+      }));
     },
   });
+  console.log(":selectedInstructor", selectedInstructor);
 
   useEffect(() => {
-    setIsVisible(true); // Trigger animation when component is mounted
+    setIsVisible(true); // Trigger animation on mount
+    const isoBookingDate = new Date(bookingDate).toISOString();
+    formik.setFieldValue("bookingDate", isoBookingDate);
+    formik.setFieldValue("instructorId", selectedInstructor?.id);
     formik.handleSubmit();
-  }, []);
+    setContent(
+      <CalendarComponent
+        currentDate={bookingDate}
+        setCurrentDate={setBookingDate}
+      />
+    );
+  }, [bookingDate, selectedInstructor]);
 
+  const filteredInstructors = fakeInstructorData.filter(
+    (instructor) =>
+      instructor.availability?.some(
+        (day) => day.date === formatDate(bookingDate)
+      ) &&
+      (drivingLevel === "All" || instructor.driving_level === drivingLevel)
+  );
+
+  console.log("formik.errors", formik.errors);
   useEffect(() => {
     const isFormInvalid = Object.keys(formik.errors).length > 0;
+    console.log("Form invalid:", !isFormInvalid);
+    console.log("formik.errors:", formik.errors);
     setIsNext(!isFormInvalid);
     setFormData((prev) => ({ ...prev, ...formik.values }));
-    setFormData((prev) => ({ ...prev, instructor: selectedInstructor?.name }));
   }, [formik.errors, formik.values, setIsNext, setFormData]);
-
-  // Function to handle instructor selection
   const handleInstructorSelect = (instructor) => {
     setSelectedInstructor(instructor);
     localStorage.setItem("selectedInstructor", JSON.stringify(instructor));
   };
-  console.log("formik.errors", formik.errors);
-  console.log("formik.values", formik.values);
 
   return (
     <div
@@ -209,30 +240,46 @@ export const Section3 = ({ setFormData, formData, setIsNext }) => {
         isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full"
       }`}
     >
-      {!selectedInstructor && (
-        <div className=" text-gray-900">
-          <header className="px-6 py-4 ">
-            <div className="">
-              <h2 className="text-xl mb-6 text-center font-Monsterrat font-bold">
-                All Instructors
-              </h2>
+      {!selectedInstructor ? (
+        <div className="text-gray-900">
+          <header className="px-6 py-4">
+            <h2 className="text-xl mb-3 text-center font-Monsterrat font-bold">
+              All Instructors
+            </h2>
+            <div className="px-4">
+              <div className="flex justify-center my-1 mx-1 gap-2 items-center">
+                <DropdownButton items={signUpDropdownItems(setDrivingLevel)} />
+
+                <Button
+                  label={format(bookingDate, "dd MMM yyyy")}
+                  className="justify-center rounded-lg font-bold text-[2.8vw] min-w-[140px] sm:text-[12px] text-center"
+                />
+                <div>
+                  <Button
+                    onClick={openModal}
+                    type="button"
+                    className="justify-center rounded-md font-bold text-[14px] w-full opacity-70 "
+                    prefixIcon={
+                      <CalenderIcon2 fill={"#fff"} height="15" width="17" />
+                    }
+                  />
+                </div>
+              </div>
 
               <Card
-                data={fakeInstructorData}
+                data={filteredInstructors}
                 onSelect={handleInstructorSelect}
               />
             </div>
           </header>
         </div>
-      )}
-
-      {selectedInstructor && (
-        <form className={`space-y-4`} onSubmit={formik.handleSubmit}>
+      ) : (
+        <form className="space-y-4" onSubmit={formik.handleSubmit}>
           <div className="mb-8">
-            <div className="flex items-center mb-4 gap-2">
+            <div className="flex mb-4 items-center gap-2">
               <ChevronLeft
+                className="cursor-pointer"
                 onClick={() => setSelectedInstructor(null)}
-                className="h-5 w-5 cursor-pointer"
               />
               <h2 className="text-lg font-Monsterrat font-bold">
                 What type of lessons do you want?
@@ -257,14 +304,21 @@ export const Section3 = ({ setFormData, formData, setIsNext }) => {
             {formik.errors.selectedType && formik.touched.selectedType && (
               <ErrorMessage
                 ErrorMessage={formik.errors.selectedType}
-                className={"text-center mt-3"}
+                className="text-center mt-3"
               />
             )}
           </div>
           <div className="mb-8">
-            <h2 className="text-[15px] font-Monsterrat font-bold mb-4">
-              Your Instructor
-            </h2>
+            <div className="flex justify-between items-center">
+              <h2 className="text-[15px] font-Monsterrat font-bold mb-4">
+                Your Instructor
+              </h2>
+              <span
+                className={`font-Monsterrat font-bold  text-white text-[10px] px-3 py-0.5 rounded bg-gray-500`}
+              >
+                {formatDate(bookingDate)}
+              </span>
+            </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-purple-5 rounded-full flex items-center justify-center">
@@ -327,7 +381,7 @@ export const Section3 = ({ setFormData, formData, setIsNext }) => {
               formik.touched.selectedPackage && (
                 <ErrorMessage
                   ErrorMessage={formik.errors.selectedPackage}
-                  className={"text-center mt-3"}
+                  className="text-center mt-3"
                 />
               )}
           </div>
@@ -666,8 +720,8 @@ export const Section7 = ({
     email: formData.emailAddress,
     password: formData.password,
     profilePicture: "https://example.com/profile.jpg",
-    phoneNumber: formData.phoneNumber,
-    dob: formData.dateOfBirth,
+    phoneNumber: formData.phoneNumber.toString(),
+    dob: new Date(formData.dateOfBirth).toISOString(),
     pickupAddress: formData.pickupAddress,
     billingAddress: formData.billingAddress,
     postalCode: formData.postalCode,
@@ -684,45 +738,69 @@ export const Section7 = ({
     instructorId: formData.instructor,
     bookingType: formData.selectedLesson,
     package: {
-      hours: formData.selectedPackage.time,
+      hours: formData.selectedPackage.hours,
       price: formData.selectedPackage.price,
     },
     lessonsType: formData.selectedType,
     date: formData.bookingDate,
   };
+
   const loadingTexts = [
     "It will take a moment",
     "Loading",
     "Please hold on, your request is being processed",
   ];
 
+  // Centralized error handling function
+  const handleError = (error) => {
+    if (error.response?.data || error.message === "Email already taken") {
+      setTimeout(() => {
+        setSection(4);
+        setLoading(false);
+      }, 2000);
+      setErrorText("Email already taken");
+      console.log("errorText", errorText);
+    }
+    console.error(
+      "Registration Failed:",
+      error.response?.data || error.message
+    );
+  };
+
   const Signup = async () => {
     setLoading(true);
     try {
       const response = await postRequest("pupil/register", data);
       console.log("Registration Successful:", response);
-      setLoading(false);
+      return true; // Return true if signup is successful
     } catch (error) {
-      if (error.response?.data || error.message === "Email already taken") {
-        setTimeout(() => {
-          setSection(4);
-          setLoading(false);
-        }, 2000);
-        setErrorText("Email already taken");
-        console.log("errorText", errorText);
-      }
-      console.error(
-        "Registration Failed:",
-        error.response?.data || error.message
-      );
+      handleError(error);
+      return false; // Return false if signup fails
     }
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+  };
+
+  const booking = async () => {
+    setLoading(true);
+    try {
+      const response = await postRequest("booking/create", bookingData);
+      console.log("Booking Successful:", response);
+    } catch (error) {
+      handleError(error);
+    }
   };
 
   useEffect(() => {
-    Signup();
+    const executeSignupAndBooking = async () => {
+      const signupSuccess = await Signup();
+      if (signupSuccess) {
+        await booking(); // Only proceed to booking if signup is successful
+      } else {
+        setLoading(false); // Stop loading if signup fails
+      }
+    };
+
+    executeSignupAndBooking();
+
     setIsVisible(true);
     setHasConfetti(true);
     setTimeout(() => setHasConfetti(false), 8000);
@@ -737,8 +815,11 @@ export const Section7 = ({
     }, 2000);
 
     // Clear interval when loading is done
-    return () => clearInterval(intervalId);
-  }, []);
+    return () => {
+      clearInterval(intervalId);
+      setLoading(false);
+    };
+  }, []); // Empty dependency array to ensure it only runs on mount
 
   return (
     <div
@@ -763,9 +844,6 @@ export const Section7 = ({
       )}
       {loading && (
         <div className="flex flex-col items-center justify-center py-[30px]">
-          <br />
-          <br />
-          <br />
           <Loader />
           <p className="font-Monsterrat text-[13px] my-4 font-extrabold">
             {loadingText}
@@ -775,6 +853,3 @@ export const Section7 = ({
     </div>
   );
 };
-
-
-

@@ -4,6 +4,8 @@ const Instructor = `/instructor`;
 export const Routes = {
   OtpVerification: (key) => `/otp-verfication/${key}`,
   login: `/login`,
+  forgotPassword: `/forgot-password`,
+  passwordSetup: `/password-setup`,
   signUp: `${Pupils}/sign-up`,
   instructorSignUp: `${Instructor}/sign-up`,
   userVault: `/`,
@@ -18,6 +20,7 @@ export const Routes = {
   parentInbox: `${Pupils}/inbox`,
   parentPayement: `${Pupils}/payement`,
   parentProfile: `${Pupils}/profile`,
+  parentEditProfile: `${Pupils}/edit-profile`,
   parentInboxById: (id) => `${Pupils}/inbox/${id}`,
 
   // Instructor Routes

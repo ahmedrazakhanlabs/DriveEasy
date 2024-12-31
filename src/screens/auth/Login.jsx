@@ -103,7 +103,7 @@ const Login = () => {
 
         <div className="flex justify-between mt-4 mx-2">
           <Link
-            to={Routes.signUp}
+            to={Routes.userVault}
             className="text-xs font-bold font-Monsterrat text-black-1 opacity-35 hover:text-gray-700 hover:underline text-center"
           >
             Signup?

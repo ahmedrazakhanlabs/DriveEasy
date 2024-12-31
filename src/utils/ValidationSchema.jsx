@@ -37,7 +37,7 @@ export const validationSchema = Yup.object({
   emailAddress: Yup.string()
     .trim()
     .email("Invalid email address")
-    .max(255, "Email address cannot exceed 255 characters")
+    .max(155, "Email address cannot exceed 155 characters")
     .required("Email is required"),
   selectedLesson: Yup.string().trim().required("Please select a lesson type."),
   cardNumber: Yup.string()

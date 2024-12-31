@@ -791,14 +791,19 @@ export const RightIcon = () => (
   </svg>
 );
 
-export const CalenderIcon2 = () => (
+export const CalenderIcon2 = ({
+  fill = "#00000",
+  width = "27.509",
+  height = "25.709",
+}) => (
   <svg
     id="Group_1351"
     data-name="Group 1351"
     xmlns="http://www.w3.org/2000/svg"
-    width="27.509"
-    height="25.709"
+    width={width}
+    height={height}
     viewBox="0 0 27.509 25.709"
+    fill={fill}
   >
     <g id="Group_1350" data-name="Group 1350" transform="translate(0 0)">
       <path
@@ -1029,5 +1034,18 @@ export const LessonIcon = () => (
         </g>
       </g>
     </g>
+  </svg>
+);
+
+export const FilterIcon = ({ height = "15", width = "20" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="#fff"
+    viewBox="0 0 512 512"
+    className="me-1"
+    height={height}
+    width={width}
+  >
+    <path d="M3.9 54.9C10.5 40.9 24.5 32 40 32l432 0c15.5 0 29.5 8.9 36.1 22.9s4.6 30.5-5.2 42.5L320 320.9 320 448c0 12.1-6.8 23.2-17.7 28.6s-23.8 4.3-33.5-3l-64-48c-8.1-6-12.8-15.5-12.8-25.6l0-79.1L9 97.3C-.7 85.4-2.8 68.8 3.9 54.9z" />
   </svg>
 );
