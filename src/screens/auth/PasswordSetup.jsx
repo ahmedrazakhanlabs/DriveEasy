@@ -2,16 +2,21 @@ import React, { useEffect } from "react";
 import { Fingerprint, Lock } from "lucide-react";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Routes } from "../../utils/Routes";
-import { FingerPrintIcon, UserIcon } from "../../utils/Icons";
+import { FingerPrintIcon } from "../../utils/Icons";
 import Header from "./components/Header";
 import { Women } from "../../assets";
 import { useFormik } from "formik";
 import { validationSchema } from "../../utils/ValidationSchema";
 import * as Yup from "yup";
+import { postRequest } from "../../helpers/Functions";
+import ErrorMessage from "../../components/ErrorMessage";
 
 const PasswordSetup = () => {
+  const { token } = useParams();
+  const navigate = useNavigate();
+
   const formik = useFormik({
     initialValues: {
       password: "",
@@ -21,13 +26,26 @@ const PasswordSetup = () => {
       password: validationSchema.fields.password,
       confirmPassword: validationSchema.fields.confirmPassword,
     }),
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values, { setSubmitting, setErrors }) => {
+      try {
+        const response = await postRequest("/pupil/change-forgotten-password", {
+          token: token,
+          password: values.password,
+        });
+        navigate(Routes.login);
+        console.log("Password changed successfully:", response);
+        return true;
+      } catch (error) {
+        setErrors({
+          password: "JWT expired! Please try again",
+        });
+        return false;
+      } finally {
+        setSubmitting(false);
+      }
     },
   });
-  useEffect(() => {
-    formik.handleSubmit();
-  }, []);
+
   return (
     <div>
       <Header
@@ -78,11 +96,14 @@ const PasswordSetup = () => {
                 }
               />
             </div>
+
             <div className="mx-20">
               <Button
                 type="submit"
                 className="w-full rounded-lg justify-center font-bold text-[12px]"
                 label={"Change password"}
+                disabled={formik.isSubmitting}
+                loading={formik.isSubmitting ? true : false}
               />
             </div>
           </form>

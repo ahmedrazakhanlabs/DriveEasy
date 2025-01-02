@@ -3,12 +3,12 @@ const Instructor = `/instructor`;
 
 export const Routes = {
   OtpVerification: (key) => `/otp-verfication/${key}`,
-  login: `/login`,
+  login: `/`,
   forgotPassword: `/forgot-password`,
-  passwordSetup: `/password-setup`,
+  passwordSetup: (key) => `/password-setup/${key}`,
   signUp: `${Pupils}/sign-up`,
   instructorSignUp: `${Instructor}/sign-up`,
-  userVault: `/`,
+  userVault: `/userVault`,
   // Parents Routes
   parentHome: `${Pupils}/home`,
   parentLessons: `${Pupils}/lessons`,

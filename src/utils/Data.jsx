@@ -42,7 +42,7 @@ import EditProfile from "../screens/parent/EditProfile.jsx";
 export const publicRoutes = [
   { path: Routes.OtpVerification(":key"), element: <OtpVerification /> },
   { path: Routes.login, element: <Login /> },
-  { path: Routes.passwordSetup, element: <PasswordSetup /> },
+  { path: Routes.passwordSetup(":token"), element: <PasswordSetup /> },
   { path: Routes.forgotPassword, element: <ForgotPassword /> },
   { path: Routes.signUp, element: <Signup /> },
   { path: Routes.userVault, element: <UserVault /> },
@@ -229,7 +229,7 @@ export const instructorSignUpFields = [
 
 export const fakeInstructorData = [
   {
-    id: 1,
+    id: "64ae1d3f29b9f3a1c8f0e123",
     name: "Ahmed Raza Khan",
     username: "ahmed_i9",
     email: "ahmed@gmail.com",

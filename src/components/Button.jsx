@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Loader2 from "./Loader2";
 
 const Button = ({
   prefixIcon,
@@ -10,6 +11,7 @@ const Button = ({
   type,
   id,
   isActive,
+  loading,
 }) => {
   // State to handle the animation trigger when clicked
   const [clicked, setClicked] = useState(false);
@@ -51,7 +53,13 @@ const Button = ({
           className={`ml-2 flex items-center  font-Monsterrat text-center text-white`}
           style={{ letterSpacing: "1px" }}
         >
-          {label}
+          {loading ? (
+            <>
+              <Loader2 /> <span className="mx-2">Loading...</span>{" "}
+            </>
+          ) : (
+            label
+          )}
         </div>
       )}
       {suffixIcon && <span className="pb-1">{suffixIcon}</span>}

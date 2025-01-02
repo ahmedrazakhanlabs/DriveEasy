@@ -735,14 +735,16 @@ export const Section7 = ({
   };
 
   const bookingData = {
-    instructorId: formData.instructor,
     bookingType: formData.selectedLesson,
+    instructorId: formData.instructorId,
     package: {
       hours: formData.selectedPackage.hours,
       price: formData.selectedPackage.price,
     },
     lessonsType: formData.selectedType,
     date: formData.bookingDate,
+    start: "2024-12-26T00:00:00.000+00:00",
+    end: "2024-12-26T01:00:00+00:00",
   };
 
   const loadingTexts = [

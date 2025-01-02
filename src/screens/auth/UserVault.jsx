@@ -3,7 +3,7 @@ import { ChevronLeft, User, LightbulbIcon } from "lucide-react";
 import Button from "../../components/Button";
 import Header from "./components/Header";
 import { MenWithCar } from "../../assets";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Routes } from "../../utils/Routes";
 const UserVault = () => {
   const [roles, setRoles] = useState({ instructor: true, pupil: false });
@@ -89,6 +89,18 @@ const UserVault = () => {
             />
           </div>
         </div>
+      </div>
+
+      <div className="text-center mt-5">
+        <Link
+          to={Routes.login}
+          className="text-[12px] text-muted-foreground   font-bold font-Monsterrat inline-flex items-center gap-2"
+        >
+          Already have an account?
+          <span className="hover:underline hover:text-purple-1">
+            ← Back to log in
+          </span>{" "}
+        </Link>
       </div>
     </div>
   );

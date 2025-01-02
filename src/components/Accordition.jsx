@@ -8,9 +8,11 @@ const Accordition = ({ items }) => {
     setActiveAccordion((prev) => (prev === index ? null : index));
   };
 
-  const AccordionItem = ({ index, title, content }) => (
+  const AccordionItem = ({ index, title, content, onClick }) => (
     <div
-      onClick={() => toggleAccordion(index)}
+      onClick={() => {
+        toggleAccordion(index), onClick();
+      }}
       className="bg-white rounded-2xl shadow-lg transition-all cursor-pointer duration-700 my-2"
     >
       <div
@@ -52,6 +54,7 @@ const Accordition = ({ items }) => {
           index={index}
           title={item.title}
           content={item.content}
+          onClick={item.onClick}
         />
       ))}
     </div>
