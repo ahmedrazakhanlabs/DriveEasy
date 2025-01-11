@@ -18,9 +18,16 @@ import {
   Roles,
   saveTokenToLocalStorage,
 } from "../../helpers";
+import { useSelector } from "react-redux";
 
 const Login = () => {
   const navigate = useNavigate();
+  const pin = useSelector((state) => state.pin.pin);
+  console.log("pin", pin);
+  useEffect(() => {
+    console.log("Current PIN:", pin.join(""));
+  }, [pin]);
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -35,17 +42,14 @@ const Login = () => {
         const response = await postRequest("/pupil/login", {
           email: values.email,
           password: values.password,
-          otp: "496253", // Example OTP
+          otp: pin.join("") || "496253", // Example OTP
         });
-        if (response.token) {
-          saveTokenToLocalStorage(response.token);
+        console.log("respologinnse", response);
+
+        if (response.data.token) {
+          saveTokenToLocalStorage(response.data.token);
           const decode = getDecodedToken();
-          console.log(
-            "decode",
-            decode.userType === Roles.Pupil
-              ? Routes.parentHome
-              : Routes.InstructorHome
-          );
+          console.log("decode", decode);
 
           navigate(
             decode.userType === Roles.Pupil

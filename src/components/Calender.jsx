@@ -4,19 +4,28 @@ import Button from "../components/Button";
 import { SphereCircle } from "../assets";
 
 const CalendarComponent = ({ currentDate, setCurrentDate }) => {
+  // Convert ISO string to Date object
+  const isoToDate = (isoString) => new Date(isoString);
+
+  // Convert Date object to ISO string
+  const dateToIso = (date) => date.toISOString();
+
   const changeMonth = (offset) => {
     setCurrentDate((prevDate) => {
+      const prevDateObj = isoToDate(prevDate); // Convert ISO string to Date object
       const newDate = new Date(
-        prevDate.getFullYear(),
-        prevDate.getMonth() + offset,
+        prevDateObj.getFullYear(),
+        prevDateObj.getMonth() + offset,
         1
       );
-      return newDate;
+      return dateToIso(newDate); // Return ISO string after updating
     });
   };
 
   const handlePrevMonth = () => changeMonth(-1);
   const handleNextMonth = () => changeMonth(1);
+
+  const currentDateObj = isoToDate(currentDate); // Convert the ISO string to Date object
 
   return (
     <div className="font-Monsterrat overflow-hidden">
@@ -30,14 +39,14 @@ const CalendarComponent = ({ currentDate, setCurrentDate }) => {
         <div className="flex flex-col items-start p-8 pt-10">
           <div className="flex items-center gap-4">
             <span className="text-6xl font-thin tracking-tight text-white">
-              {currentDate.getDate()}
+              {currentDateObj.getDate()}
             </span>
             <div className="flex flex-col text-white/90">
               <span className="text-xl font-light">
-                {currentDate.toLocaleString("default", { month: "long" })}
+                {currentDateObj.toLocaleString("default", { month: "long" })}
               </span>
               <span className="text-xl font-light">
-                {currentDate.getFullYear()}
+                {currentDateObj.getFullYear()}
               </span>
             </div>
           </div>
@@ -46,9 +55,9 @@ const CalendarComponent = ({ currentDate, setCurrentDate }) => {
 
       {/* Calendar */}
       <Calendar
-        value={currentDate}
-        onChange={setCurrentDate}
-        activeStartDate={currentDate}
+        value={currentDateObj}
+        onChange={(newDate) => setCurrentDate(dateToIso(newDate))} // Convert Date to ISO string
+        activeStartDate={currentDateObj}
       />
 
       {/* Navigation Buttons */}

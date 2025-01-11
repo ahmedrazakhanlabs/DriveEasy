@@ -6,6 +6,9 @@ export default {
     extend: {
       colors: {
         white: "#FFFFFF",
+        danger: {
+          1: "#eb7e7e",
+        },
         black: {
           1: "#000000",
         },
@@ -64,7 +67,18 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addComponents }) {
+      addComponents({
+        ".animate": {
+          transition: "all 200ms",
+          "&:hover": {
+            transform: "scale(1.05)",
+          },
+        },
+      });
+    },
+  ],
 };
 
 // /** @type {import('tailwindcss').Config} */

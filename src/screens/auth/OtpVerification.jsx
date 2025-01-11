@@ -5,13 +5,21 @@ import Otp from "./components/Otp";
 import { Routes } from "../../utils/Routes";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ErrorMessage from "../../components/ErrorMessage";
+import { useSelector, useDispatch } from "react-redux";
+import { setPin } from "../../redux/slice";
 
 const OtpVerification = () => {
   const { key } = useParams();
   const [userType, setUserType] = useState(
-    atob(key) === "instructor" ? "instructor" : "pupil"
+    key === "instructor" ? "instructor" : "pupil"
   );
-  const [pin, setPin] = useState(["", "", "", ""]);
+  // const [pin, setPin] = useState(["", "", "", ""]);
+
+  const pin = useSelector((state) => state.pin.pin);
+  useEffect(() => {
+    console.log("Current PIN:", pin);
+  }, [pin]); // Logs whenever `pin` changes
+
   const [error, setError] = useState("");
 
   const navigate = useNavigate();

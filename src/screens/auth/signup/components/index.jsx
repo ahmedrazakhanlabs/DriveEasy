@@ -12,7 +12,7 @@ import {
   signUpDropdownItems,
 } from "../../../../utils/Data";
 import Button from "../../../../components/Button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, CornerUpLeft } from "lucide-react";
 import Card from "../../../../components/Card";
 
 import DropdownButton from "../../../../components/DropdownButton";
@@ -20,6 +20,14 @@ import { CalenderIcon2 } from "../../../../utils/Icons";
 import Modal from "../../../../components/modals/Modal";
 import CalendarComponent from "../../../../components/Calender";
 import { format } from "date-fns";
+import { stripePromise } from "../../../../helpers";
+import {
+  Elements,
+  useStripe,
+  useElements,
+  CardElement,
+} from "@stripe/react-stripe-js";
+
 export const Section1 = ({ setFormData, formData, setIsNext }) => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -172,14 +180,14 @@ export const Section3 = ({
   formData,
   setIsNext,
   openModal,
-  closeModal,
   setContent,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedInstructor, setSelectedInstructor] = useState(
     JSON.parse(localStorage.getItem("selectedInstructor")) || null
   );
-  const [bookingDate, setBookingDate] = useState(new Date());
+  const [bookingDate, setBookingDate] = useState(new Date().toISOString());
+
   const [drivingLevel, setDrivingLevel] = useState("All");
 
   const validationSchema = Yup.object({
@@ -197,10 +205,8 @@ export const Section3 = ({
       }));
     },
   });
-  console.log(":selectedInstructor", selectedInstructor);
-
   useEffect(() => {
-    setIsVisible(true); // Trigger animation on mount
+    setIsVisible(true);
     const isoBookingDate = new Date(bookingDate).toISOString();
     formik.setFieldValue("bookingDate", isoBookingDate);
     formik.setFieldValue("instructorId", selectedInstructor?.id);
@@ -213,15 +219,18 @@ export const Section3 = ({
     );
   }, [bookingDate, selectedInstructor]);
 
-  const filteredInstructors = fakeInstructorData.filter(
-    (instructor) =>
+  const filteredInstructors = fakeInstructorData.filter((instructor) => {
+    const bookingDateOnly = bookingDate.split("T")[0]; // Get the date part of bookingDate
+    return (
       instructor.availability?.some(
-        (day) => day.date === formatDate(bookingDate)
+        (day) =>
+          day.start.split("T")[0] === bookingDateOnly ||
+          day.end.split("T")[0] === bookingDateOnly
       ) &&
       (drivingLevel === "All" || instructor.driving_level === drivingLevel)
-  );
+    );
+  });
 
-  console.log("formik.errors", formik.errors);
   useEffect(() => {
     const isFormInvalid = Object.keys(formik.errors).length > 0;
     console.log("Form invalid:", !isFormInvalid);
@@ -267,8 +276,10 @@ export const Section3 = ({
               </div>
 
               <Card
+                formData={formData}
                 data={filteredInstructors}
                 onSelect={handleInstructorSelect}
+                setFormData={setFormData}
               />
             </div>
           </header>
@@ -277,8 +288,8 @@ export const Section3 = ({
         <form className="space-y-4" onSubmit={formik.handleSubmit}>
           <div className="mb-8">
             <div className="flex mb-4 items-center gap-2">
-              <ChevronLeft
-                className="cursor-pointer"
+              <CornerUpLeft
+                className="cursor-pointer h-5 w-5 animate"
                 onClick={() => setSelectedInstructor(null)}
               />
               <h2 className="text-lg font-Monsterrat font-bold">
@@ -286,12 +297,12 @@ export const Section3 = ({
               </h2>
             </div>
             <div className="flex gap-4 justify-center">
-              {["Manual", "Automatic"].map((type) => (
+              {["manual", "automatic"].map((type) => (
                 <button
                   key={type}
                   type="button"
                   onClick={() => formik.setFieldValue("selectedType", type)}
-                  className={`px-6 py-2 font-Monsterrat font-bold text-[14px] rounded-lg transition-colors ${
+                  className={`px-6 py-2 font-Monsterrat font-bold text-[14px] capitalize rounded-lg transition-colors ${
                     formik.values.selectedType === type
                       ? "bg-purple-1 text-white"
                       : "bg-purple-5 hover:bg-[#e9e3ff]"
@@ -323,10 +334,10 @@ export const Section3 = ({
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-purple-5 rounded-full flex items-center justify-center">
                   <span className="text-purple-1 font-Monsterrat font-bold">
-                    {selectedInstructor.name
+                    {selectedInstructor?.name
                       .split(" ")
-                      .map((word) => word.charAt(0).toUpperCase())
-                      .join("")}
+                      .map((word) => word.charAt(0))
+                      .join("")}{" "}
                   </span>
                 </div>
                 <span className="font-Monsterrat font-bold text-[14px]">
@@ -703,7 +714,298 @@ export const Section6 = ({ setFormData, formData, setIsNext, errorText }) => {
     </div>
   );
 };
-export const Section7 = ({
+
+// Main Section7 Component
+export const Section7 = ({ setSection, formData, setErrorText, loading, setLoading }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [hasConfetti, setHasConfetti] = useState(false);
+  const [loadingText, setLoadingText] = useState("It will take a moment");
+  const [pupilId, setPupilId] = useState(null);
+  const [bookingId, setBookingId] = useState(null);
+
+  const loadingTexts = [
+    "It will take a moment",
+    "Loading",
+    "Please hold on, your request is being processed",
+  ];
+
+  const data = {
+    firstName: formData.firstName,
+    lastName: formData.lastName,
+    email: formData.emailAddress,
+    password: formData.password,
+    profilePicture: "https://example.com/profile.jpg",
+    phoneNumber: formData.phoneNumber.toString(),
+    dob: new Date(formData.dateOfBirth).toISOString(),
+    pickupAddress: formData.pickupAddress,
+    billingAddress: formData.billingAddress,
+    postalCode: formData.postalCode,
+    cardDetails: {
+      cardNo: formData.cardNumber,
+      expiry: formData.expiryDate,
+      cvv: formData.cvv,
+      name: formData.cardName,
+    },
+  };
+
+  const bookingData = {
+    bookingType: formData.selectedLesson,
+    instructorId: formData.instructorId,
+    package: {
+      hours: formData.selectedPackage.hours,
+      price: formData.selectedPackage.price,
+    },
+    lessonsType: formData.selectedType,
+    date: formData.bookingDate,
+    start: formData.bookingStart,
+    end: formData.bookingEnd,
+  };
+
+  const handleError = (error) => {
+    if (error.response?.data || error.message === "Email already taken") {
+      setTimeout(() => {
+        setSection(4);
+        setLoading(false);
+      }, 2000);
+      setErrorText("Email already taken");
+    }
+    console.error("Registration Failed:", error.response?.data || error.message);
+  };
+
+  const Signup = async () => {
+    setLoading(true);
+    try {
+      const response = await postRequest("pupil/register", data);
+      console.log("Registration Successful:", response.data);
+      setPupilId(response.data.pupilId);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+      return false;
+    }
+  };
+
+  const booking = async (pupilId) => {
+    setLoading(true);
+    try {
+      const response = await postRequest("booking/create", {
+        ...bookingData,
+        pupilId: pupilId,
+      });
+      console.log("Booking Successful:", response);
+      return response.data.booking._id;
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  
+  const payForBooking = async (bookingId) => {
+    setLoading(true);
+    try {
+      const response = await postRequest("payment/payForBooking", {
+        bookingId: bookingId,
+      });
+      console.log("Payment Response:", response);
+      return response.data;
+
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const [clientSecret, setClientSecret] = useState(null);
+  const [payementId, setPayementId] = useState(null);
+
+  useEffect(() => {
+    const executeSignupAndBooking = async () => {
+      try {
+        const signupResult = await Signup();
+        if (signupResult) {
+          const { pupilId } = signupResult;
+          const bookingId = await booking(pupilId);
+          setBookingId(bookingId);
+          const bookingResponse = await payForBooking(bookingId);
+          setClientSecret(bookingResponse.client_secret);
+          setPayementId(bookingResponse.paymentId);
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error in signup and booking process:", error);
+        setLoading(false);
+      }
+    };
+
+    executeSignupAndBooking();
+
+    setIsVisible(true);
+    setLoading(false);
+    const intervalId = setInterval(() => {
+      setLoadingText((prevText) => {
+        const currentIndex = loadingTexts.indexOf(prevText);
+        const nextIndex = (currentIndex + 1) % loadingTexts.length;
+        return loadingTexts[nextIndex];
+      });
+    }, 2000);
+
+    return () => {
+      clearInterval(intervalId);
+      setLoading(false);
+    };
+  }, []);
+
+  return (
+    <div
+      className={`transition-all duration-700 transform ${
+        isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full"
+      }`}
+    >
+      <div className="w-full max-w-md py-[30px] p-4">
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-[30px]">
+            <Loader />
+            <p className="font-Monsterrat text-[13px] my-4 font-extrabold">
+              {loadingText}
+            </p>
+          </div>
+        ) : (
+          <>
+            <PaymentForm clientSecret={clientSecret} payementId={payementId} />
+
+            {/* : hasConfetti ? (
+          <div className="absolute z-50 mt-[-270px]">
+            <Confetti />
+          </div>
+        )
+         */}
+            {/* <h2 className="font-MonsterratBold font-bold text-center text-xl">
+              Congratulations!
+            </h2>
+            <p className="font-Monsterrat font-bold text-center text-[15px]">
+              Your Booking has been created.
+            </p>
+            <button onClick={() => console.log("Pay now clicked")}>
+              Pay Now
+            </button> */}
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export const PaymentForm = ({ clientSecret, payementId }) => {
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+
+  const stripe = useStripe();
+  const elements = useElements();
+
+
+  const confirmPayement = async () => {
+  
+    try {
+      const response = await postRequest("payment/payementId", {
+        payementId: payementId,
+      });
+      console.log("Payment Response:", response);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!stripe || !elements || !clientSecret ) {
+      setError("Stripe is not properly initialized.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    const cardElement = elements.getElement(CardElement);
+
+    try {
+      const paymentResult = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: {
+            email,
+          },
+        },
+      });
+
+      if (paymentResult.error) {
+        setError(paymentResult.error.message);
+        console.error("Payment failed:", paymentResult.error.message);
+      } else if (paymentResult.paymentIntent.status === "succeeded") {
+        console.log("Payment successful:", paymentResult.paymentIntent);
+        setPaymentSuccess(true);
+        confirmPayement();
+        
+      }
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.");
+      console.error("Payment error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <h1 className="text-xl font-bold text-center mb-4">
+        Complete Your Payment
+      </h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1" htmlFor="card">
+            Card Details
+          </label>
+          <div className="p-3 border rounded-lg">
+            <CardElement
+              options={{
+                style: {
+                  base: {
+                    fontSize: "16px",
+                    color: "#424770",
+                    "::placeholder": { color: "#aab7c4" },
+                  },
+                  invalid: { color: "#9e2146" },
+                },
+              }}
+            />
+          </div>
+        </div>
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {paymentSuccess && (
+          <p className="text-green-500 text-sm">Payment successful!</p>
+        )}
+        <button
+          type="submit"
+          className={`w-full bg-blue-500 text-white py-2 rounded-lg font-semibold hover:bg-blue-600 transition ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          disabled={loading || !stripe || !elements}
+        >
+          {loading ? "Processing..." : "Pay Now"}
+        </button>
+      </form>
+    </div>
+  );
+};
+
+
+
+export const Section37 = ({
   setSection,
   formData,
   setErrorText,
@@ -713,6 +1015,10 @@ export const Section7 = ({
   const [isVisible, setIsVisible] = useState(false);
   const [hasConfetti, setHasConfetti] = useState(false);
   const [loadingText, setLoadingText] = useState("It will take a moment");
+  const [pupilId, setPupilId] = useState(null);
+  const [bookingId, setBookingId] = useState(null);
+  const stripe = useStripe();
+  const elements = useElements();
 
   const data = {
     firstName: formData.firstName,
@@ -743,8 +1049,8 @@ export const Section7 = ({
     },
     lessonsType: formData.selectedType,
     date: formData.bookingDate,
-    start: "2024-12-26T00:00:00.000+00:00",
-    end: "2024-12-26T01:00:00+00:00",
+    start: formData.bookingStart,
+    end: formData.bookingEnd,
   };
 
   const loadingTexts = [
@@ -753,7 +1059,6 @@ export const Section7 = ({
     "Please hold on, your request is being processed",
   ];
 
-  // Centralized error handling function
   const handleError = (error) => {
     if (error.response?.data || error.message === "Email already taken") {
       setTimeout(() => {
@@ -761,53 +1066,95 @@ export const Section7 = ({
         setLoading(false);
       }, 2000);
       setErrorText("Email already taken");
-      console.log("errorText", errorText);
     }
-    console.error(
-      "Registration Failed:",
-      error.response?.data || error.message
-    );
+    console.error("Registration Failed:", error.response?.data || error.message);
   };
 
   const Signup = async () => {
     setLoading(true);
     try {
       const response = await postRequest("pupil/register", data);
-      console.log("Registration Successful:", response);
-      return true; // Return true if signup is successful
+      console.log("Registration Successful:", response.data);
+      setPupilId(response.data.pupilId);
+      return response.data;
     } catch (error) {
       handleError(error);
-      return false; // Return false if signup fails
+      return false;
     }
   };
 
-  const booking = async () => {
+  const booking = async (pupilId) => {
     setLoading(true);
     try {
-      const response = await postRequest("booking/create", bookingData);
+      const response = await postRequest("booking/create", {
+        ...bookingData,
+        pupilId: pupilId,
+      });
       console.log("Booking Successful:", response);
+      return response.data.booking._id;
     } catch (error) {
       handleError(error);
+    }
+  };
+
+  const payForBooking = async (bookingId) => {
+    setLoading(true);
+    try {
+      const response = await postRequest("payment/payForBooking", {
+        bookingId: bookingId,
+      });
+      console.log("Payment Response:", response);
+      const clientSecret = response.data.client_secret;
+      const payementId = response.data.paymentId;
+
+      // Confirm the payment using Stripe
+      if (stripe && elements && clientSecret) {
+        const cardElement = elements.getElement(CardElement);
+        const paymentResult = await stripe.confirmCardPayment(clientSecret, {
+          payment_method: {
+            card: cardElement,
+          },
+        });
+
+        if (paymentResult.error) {
+          console.error("Payment failed:", paymentResult.error.message);
+          setErrorText(paymentResult.error.message);
+          setLoading(false);
+        } else if (paymentResult.paymentIntent.status === "succeeded") {
+          console.log("Payment successful:", paymentResult.paymentIntent);
+          setHasConfetti(true);
+          setTimeout(() => setHasConfetti(false), 8000);
+        }
+      }
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     const executeSignupAndBooking = async () => {
-      const signupSuccess = await Signup();
-      if (signupSuccess) {
-        await booking(); // Only proceed to booking if signup is successful
-      } else {
-        setLoading(false); // Stop loading if signup fails
+      try {
+        const signupResult = await Signup();
+        if (signupResult) {
+          const { pupilId } = signupResult;
+          const bookingId = await booking(pupilId);
+          setBookingId(bookingId);
+          await payForBooking(bookingId);
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error in signup and booking process:", error);
+        setLoading(false);
       }
     };
 
     executeSignupAndBooking();
 
     setIsVisible(true);
-    setHasConfetti(true);
-    setTimeout(() => setHasConfetti(false), 8000);
-
-    // Change loading text every 2 seconds
+    setLoading(false);
     const intervalId = setInterval(() => {
       setLoadingText((prevText) => {
         const currentIndex = loadingTexts.indexOf(prevText);
@@ -816,12 +1163,53 @@ export const Section7 = ({
       });
     }, 2000);
 
-    // Clear interval when loading is done
     return () => {
       clearInterval(intervalId);
       setLoading(false);
     };
-  }, []); // Empty dependency array to ensure it only runs on mount
+  }, []);
+
+
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!stripe || !elements) {
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      // Assuming you have a backend to create the payment intent
+      const { clientSecret } = await fetch("/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      }).then((res) => res.json());
+
+      const cardElement = elements.getElement(CardElement);
+      const paymentResult = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: { email },
+        },
+      });
+
+      if (paymentResult.error) {
+        setError(paymentResult.error.message);
+      } else if (paymentResult.paymentIntent.status === "succeeded") {
+        setPaymentSuccess(true);
+      }
+    } catch (err) {
+      setError("An error occurred during payment. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div
@@ -829,6 +1217,63 @@ export const Section7 = ({
         isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full"
       }`}
     >
+      {/* <CardElement /> */}
+      <div className="w-full max-w-md  py-[30px] p-4">
+        <>
+          <h1 className="text-xl font-bold text-center mb-4">
+            Complete Your Payment
+          </h1>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1" htmlFor="email">
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-3 py-2 border rounded-lg focus:ring focus:ring-blue-300"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1" htmlFor="card">
+                Card Details
+              </label>
+              <div className="p-3 border rounded-lg">
+                <CardElement
+                  options={{
+                    style: {
+                      base: {
+                        fontSize: "16px",
+                        color: "#424770",
+                        "::placeholder": {
+                          color: "#aab7c4",
+                        },
+                      },
+                      invalid: {
+                        color: "#9e2146",
+                      },
+                    },
+                  }}
+                />
+              </div>
+            </div>
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+            <button
+              type="submit"
+              className={`w-full bg-blue-500 text-white py-2 rounded-lg font-semibold hover:bg-blue-600 transition ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={loading || !stripe || !elements}
+            >
+              {loading ? "Processing..." : "Pay Now"}
+            </button>
+          </form>
+        </>
+      </div>
+
       {!loading && hasConfetti && (
         <div className="absolute z-50 mt-[-270px]">
           <Confetti />
@@ -839,6 +1284,7 @@ export const Section7 = ({
           <h2 className="font-MonsterratBold font-bold text-center text-xl">
             Congratulations!
           </h2>
+          <button onClick={() => payForBooking(bookingId)}>Pay Now</button>
           <p className="font-Monsterrat font-bold text-center text-[15px]">
             Your Booking has been created.
           </p>
@@ -855,3 +1301,354 @@ export const Section7 = ({
     </div>
   );
 };
+
+
+  
+
+
+
+// export const Section7 = ({
+//   setSection,
+//   formData,
+//   setErrorText,
+//   loading,
+//   setLoading,
+// }) => {
+//   const [isVisible, setIsVisible] = useState(false);
+//   const [hasConfetti, setHasConfetti] = useState(false);
+//   const [loadingText, setLoadingText] = useState("It will take a moment");
+//   const [pupilId, setPupilId] = useState(null);
+//   const [bookingId, setBookingId] = useState(null);
+//   console.log("pupilId", pupilId);
+//   console.log("bookingId", bookingId);
+
+//   const data = {
+//     firstName: formData.firstName,
+//     lastName: formData.lastName,
+//     email: formData.emailAddress,
+//     password: formData.password,
+//     profilePicture: "https://example.com/profile.jpg",
+//     phoneNumber: formData.phoneNumber.toString(),
+//     dob: new Date(formData.dateOfBirth).toISOString(),
+//     pickupAddress: formData.pickupAddress,
+//     billingAddress: formData.billingAddress,
+//     postalCode: formData.postalCode,
+
+//     cardDetails: {
+//       cardNo: formData.cardNumber,
+//       expiry: formData.expiryDate,
+//       cvv: formData.cvv,
+//       name: formData.cardName,
+//     },
+//   };
+
+//   const bookingData = {
+//     bookingType: formData.selectedLesson,
+//     instructorId: formData.instructorId,
+//     package: {
+//       hours: formData.selectedPackage.hours,
+//       price: formData.selectedPackage.price,
+//     },
+//     lessonsType: formData.selectedType,
+//     date: formData.bookingDate,
+//     start: formData.bookingStart,
+//     end: formData.bookingEnd,
+//   };
+
+//   const loadingTexts = [
+//     "It will take a moment",
+//     "Loading",
+//     "Please hold on, your request is being processed",
+//   ];
+
+//   // Centralized error handling function
+//   const handleError = (error) => {
+//     if (error.response?.data || error.message === "Email already taken") {
+//       setTimeout(() => {
+//         setSection(4);
+//         setLoading(false);
+//       }, 2000);
+//       setErrorText("Email already taken");
+//     }
+//     console.error(
+//       "Registration Failed:",
+//       error.response?.data || error.message
+//     );
+//   };
+
+//   const Signup = async () => {
+//     setLoading(true);
+//     try {
+//       const response = await postRequest("pupil/register", data);
+//       console.log("Registration Successful:", response.data);
+//       console.log("response.data.data.pupilId:", response.data.pupilId);
+//       setPupilId(response.data.pupilId);
+//       return response.data; // Return the full response data
+//     } catch (error) {
+//       handleError(error);
+//       return false;
+//     }
+//   };
+
+//   const booking = async (pupilId) => {
+//     setLoading(true);
+//     try {
+//       const response = await postRequest("booking/create", {
+//         ...bookingData,
+//         pupilId: pupilId, // Use the passed pupilId
+//       });
+//       console.log("Booking Successful:", response);
+//       const bookingId = response.data.booking._id; // Extract bookingId
+//       return bookingId; // Return bookingId directly
+
+//       console.log("Booking Successful:", response);
+//     } catch (error) {
+//       handleError(error);
+//     }
+//   };
+
+//   const payForBooking = async (bookingId) => {
+//     setLoading(true);
+//     try {
+//       const response = await postRequest("payment/payForBooking", {
+//         bookingId: bookingId, // Use the passed pupilId
+//       });
+//       console.log("Payment Successful:", response);
+//     } catch (error) {
+//       handleError(error);
+//     }
+//   };
+
+//   useEffect(() => {
+//     const executeSignupAndBooking = async () => {
+//       try {
+//         const signupResult = await Signup();
+//         if (signupResult) {
+//           const { pupilId } = signupResult; // Extract pupilId directly
+//           const bookingId = await booking(pupilId); // Wait for bookingId from booking
+//           await payForBooking(bookingId); // Use the returned bookingId
+//         } else {
+//           setLoading(false);
+//         }
+//       } catch (error) {
+//         console.error("Error in signup and booking process:", error);
+//         setLoading(false);
+//       }
+//     };
+
+//     executeSignupAndBooking();
+
+//     setIsVisible(true);
+//     setHasConfetti(true);
+//     setTimeout(() => setHasConfetti(false), 8000);
+// setLoading(false);
+//     // Change loading text every 2 seconds
+//     const intervalId = setInterval(() => {
+//       setLoadingText((prevText) => {
+//         const currentIndex = loadingTexts.indexOf(prevText);
+//         const nextIndex = (currentIndex + 1) % loadingTexts.length;
+//         return loadingTexts[nextIndex];
+//       });
+//     }, 2000);
+
+//     // Clear interval when loading is done
+//     return () => {
+//       clearInterval(intervalId);
+//       setLoading(false);
+//     };
+//   }, []); // Empty dependency array to ensure it only runs on mount
+
+//   return (
+//     <div
+//       className={`transition-all duration-700 transform ${
+//         isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full"
+//       }`}
+//     >
+//       {!loading && hasConfetti && (
+//         <div className="absolute z-50 mt-[-270px]">
+//           <Confetti />
+//         </div>
+//       )}
+//       {!loading && (
+//         <>
+//           <h2 className="font-MonsterratBold font-bold text-center text-xl">
+//             Congratulations!
+//           </h2>
+//           <button onClick={() => booking(pupilId)}>book</button>
+//           <p className="font-Monsterrat font-bold text-center text-[15px]">
+//             Your Booking has been created.
+//           </p>
+//         </>
+//       )}
+//       {loading && (
+//         <div className="flex flex-col items-center justify-center py-[30px]">
+//           <Loader />
+//           <p className="font-Monsterrat text-[13px] my-4 font-extrabold">
+//             {loadingText}
+//           </p>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export const Section7 = ({
+//   setSection,
+//   formData,
+//   setErrorText,
+//   loading,
+//   setLoading,
+// }) => {
+//   const [isVisible, setIsVisible] = useState(false);
+//   const [hasConfetti, setHasConfetti] = useState(false);
+//   const [loadingText, setLoadingText] = useState("It will take a moment");
+//   const [pupilId, setPupilId] = useState(null);
+//   console.log("pupilId", pupilId);
+
+//   const data = {
+//     firstName: formData.firstName,
+//     lastName: formData.lastName,
+//     email: formData.emailAddress,
+//     password: formData.password,
+//     profilePicture: "https://example.com/profile.jpg",
+//     phoneNumber: formData.phoneNumber.toString(),
+//     dob: new Date(formData.dateOfBirth).toISOString(),
+//     pickupAddress: formData.pickupAddress,
+//     billingAddress: formData.billingAddress,
+//     postalCode: formData.postalCode,
+
+//     cardDetails: {
+//       cardNo: formData.cardNumber,
+//       expiry: formData.expiryDate,
+//       cvv: formData.cvv,
+//       name: formData.cardName,
+//     },
+//   };
+
+//   const bookingData = {
+//     bookingType: formData.selectedLesson,
+//     instructorId: formData.instructorId,
+//     package: {
+//       hours: formData.selectedPackage.hours,
+//       price: formData.selectedPackage.price,
+//     },
+//     lessonsType: formData.selectedType,
+//     date: formData.bookingDate,
+//     start: formData.bookingStart,
+//     end: formData.bookingEnd,
+//   };
+
+//   const loadingTexts = [
+//     "It will take a moment",
+//     "Loading",
+//     "Please hold on, your request is being processed",
+//   ];
+
+//   // Centralized error handling function
+//   const handleError = (error) => {
+//     if (error.response?.data || error.message === "Email already taken") {
+//       setTimeout(() => {
+//         setSection(4);
+//         setLoading(false);
+//       }, 2000);
+//       setErrorText("Email already taken");
+//       // console.log("errorText", errorText);
+//     }
+//     console.error(
+//       "Registration Failed:",
+//       error.response?.data || error.message
+//     );
+//   };
+
+//   const Signup = async () => {
+//     setLoading(true);
+//     try {
+//       const response = await postRequest("pupil/register", data);
+//       console.log("Registration Successful:", response.data);
+//       console.log("response.data.data.pupilId:", response.data.pupilId);
+//       setPupilId(response.data.pupilId);
+//       return true;
+//     } catch (error) {
+//       handleError(error);
+//       return false;
+//     }
+//   };
+
+//   const booking = async () => {
+//     setLoading(true);
+//     try {
+//       const response = await postRequest("booking/create", {
+//         ...bookingData,
+//         pupilId: pupilId,
+//       });
+//       console.log("Booking Successful:", response);
+//     } catch (error) {
+//       handleError(error);
+//     }
+//   };
+
+//   useEffect(() => {
+//     const executeSignupAndBooking = async () => {
+//       const signupSuccess = await Signup();
+//       if (signupSuccess) {
+//         await booking();
+//       } else {
+//         setLoading(false);
+//       }
+//     };
+
+//     executeSignupAndBooking();
+
+//     setIsVisible(true);
+//     setHasConfetti(true);
+//     setTimeout(() => setHasConfetti(false), 8000);
+
+//     // Change loading text every 2 seconds
+//     const intervalId = setInterval(() => {
+//       setLoadingText((prevText) => {
+//         const currentIndex = loadingTexts.indexOf(prevText);
+//         const nextIndex = (currentIndex + 1) % loadingTexts.length;
+//         return loadingTexts[nextIndex];
+//       });
+//     }, 2000);
+
+//     // Clear interval when loading is done
+//     return () => {
+//       clearInterval(intervalId);
+//       setLoading(false);
+//     };
+//   }, []); // Empty dependency array to ensure it only runs on mount
+
+//   return (
+//     <div
+//       className={`transition-all duration-700 transform ${
+//         isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full"
+//       }`}
+//     >
+//       {!loading && hasConfetti && (
+//         <div className="absolute z-50 mt-[-270px]">
+//           <Confetti />
+//         </div>
+//       )}
+//       {!loading && (
+//         <>
+//           <h2 className="font-MonsterratBold font-bold text-center text-xl">
+//             Congratulations!
+//           </h2>
+//           <button onClick={booking}>book</button>
+//           <p className="font-Monsterrat font-bold text-center text-[15px]">
+//             Your Booking has been created.
+//           </p>
+//         </>
+//       )}
+//       {loading && (
+//         <div className="flex flex-col items-center justify-center py-[30px]">
+//           <Loader />
+//           <p className="font-Monsterrat text-[13px] my-4 font-extrabold">
+//             {loadingText}
+//           </p>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };

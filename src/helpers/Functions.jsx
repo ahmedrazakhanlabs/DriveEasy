@@ -23,7 +23,8 @@ export const getRequest = async (url, params = {}) => {
 export const postRequest = async (url, data) => {
   try {
     const response = await apiClient.post(url, data);
-    return response.data;
+    console.log("response", response);
+    return response;
   } catch (error) {
     console.error("POST Request Error:", error.response?.data || error.message);
     throw error;

@@ -9,7 +9,7 @@ export const validationSchema = Yup.object({
   address: Yup.string()
     .trim()
     .min(2, "Address must be at least 2 characters long")
-    .max(50, "Address cannot exceed 50 characters")
+    .max(250, "Address cannot exceed 250 characters")
     .required("Address name is required"),
   fullName: Yup.string()
     .trim()

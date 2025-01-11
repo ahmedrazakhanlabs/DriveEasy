@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "./Button";
 import Pagination from "./Pagination";
-import Image from "./Image";
 import { Calendar, ChevronsUpIcon, Clock } from "lucide-react";
 import ErrorMessage from "./ErrorMessage";
+import { formatTimeRange } from "../helpers";
+import { NoDataFound } from "../utils/Icons";
+// import Image from "../../components/Image";
 
-const Card = ({ onSelect, data }) => {
+const Card = ({ onSelect, data, formData, setFormData }) => {
   const [isVisible, setIsVisible] = useState(false);
-
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 1;
   const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -15,25 +16,40 @@ const Card = ({ onSelect, data }) => {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-
   const handlePageChange = (page) => {
     setCurrentPage(page);
     setIsVisible(false);
   };
 
   const handleScroll = () => {
-    // This could be an event listener or just a handler to show when user is scrolled
     const scrollableElement = document.getElementById("availability-list");
     if (scrollableElement.scrollHeight > scrollableElement.clientHeight) {
-      setIsVisible(true); // Show "scroll indicator" if overflow occurs
+      setIsVisible(true);
     }
   };
 
   useEffect(() => {
     setIsVisible(true);
   }, [currentPage]);
-  console.log("currentData", currentData);
 
+  const handleBookSlot = (start, end) => {
+    setFormData((prev) => ({
+      ...prev,
+      bookingStart: start,
+      bookingEnd: end,
+    }));
+  };
+
+  const [error, setError] = useState(null);
+  const handleBook = (item) => {
+    // e.preventDefault();
+    setError(null);
+    if (!formData.bookingStart) {
+      setError("Please select a time slot.");
+    } else {
+      onSelect(item);
+    }
+  };
   return (
     <div>
       {currentData &&
@@ -49,6 +65,7 @@ const Card = ({ onSelect, data }) => {
           >
             <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100">
               <div className="relative">
+                {/* <img src={item.image} alt={`${item.name}'s thumbnail`} /> */}
                 <img src={item.image} alt={`${item.name}'s thumbnail`} />
                 <span
                   className={`absolute font-Monsterrat top-2 left-2 text-white text-xs px-2 py-0.5 rounded ${
@@ -78,7 +95,7 @@ const Card = ({ onSelect, data }) => {
                     <span
                       className={`font-Monsterrat text-white text-xs px-2 py-0.5 rounded bg-gray-500`}
                     >
-                      {item.availability[0].date}
+                      {item.availability[0].start.split("T")[0]}
                     </span>
                   </div>
 
@@ -87,32 +104,45 @@ const Card = ({ onSelect, data }) => {
                     className="mt-2 h-[120px] overflow-y-scroll"
                     onScroll={handleScroll}
                   >
-                    {item.availability.map((dayAvailability, index) =>
-                      Object.entries(dayAvailability)
-                        .filter(([key]) => key !== "date")
-                        .map(([day, hours]) => (
-                          <li
-                            key={`${day}-${index}`}
-                            className="flex items-center mx-3 space-x-4 p-4 my-2 bg-white rounded-lg shadow-xl"
-                          >
-                            <div className="flex-shrink-0">
-                              <Calendar className="h-6 w-6 text-blue-500" />
-                            </div>
-                            <div className="flex-grow">
-                              <p className="text-[13px] capitalize font-Monsterrat font-semibold text-gray-800">
-                                {day}
-                              </p>
-                              <div className="flex items-center mt-1 text-gray-600">
-                                <Clock className="h-3 w-3 mr-2" />
-                                <p className="font-Monsterrat text-[12px]">
-                                  {hours}
-                                </p>
-                              </div>
-                            </div>
-                          </li>
-                        ))
-                    )}
+                    {item.availability.map((dayAvailability, index) => (
+                      <li
+                        onClick={() =>
+                          handleBookSlot(
+                            dayAvailability.start,
+                            dayAvailability.end
+                          )
+                        }
+                        key={`${dayAvailability.start}-${dayAvailability.end}-${index}`}
+                        className={`flex items-center mx-3 space-x-4 p-4 my-2 ${
+                          error
+                            ? `border border-danger-1 ${formData.bookingStart}`
+                            : "bg-white"
+                        }  rounded-lg shadow-xl`}
+                      >
+                        <div className="flex-shrink-0">
+                          <Calendar className="h-6 w-6 text-blue-500" />
+                        </div>
+                        <div className="flex-grow">
+                          <div className="flex items-center mt-1 text-gray-600">
+                            <Clock className="h-3 w-3 mr-2" />
+                            <p className="font-Monsterrat text-[12px]">
+                              {formatTimeRange(
+                                dayAvailability.start,
+                                dayAvailability.end
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
                   </ul>
+
+                  {error && (
+                    <ErrorMessage
+                      className={"text-center my-3"}
+                      ErrorMessage={error}
+                    />
+                  )}
 
                   {isVisible && (
                     <div className="flex justify-center text-gray-600 mt-2 animate-upDown">
@@ -124,23 +154,22 @@ const Card = ({ onSelect, data }) => {
                 <div className="text-blue-500 font-Monsterrat font-bold">
                   £{item.perHour}
                 </div>
-
+                {/* <form> */}
                 <Button
-                  onClick={() => onSelect(item)}
                   label={"Book Now"}
                   className={"justify-center rounded-lg"}
+                  type="button"
+                  onClick={() => handleBook(item)}
                 />
+                {/* </form> */}
               </div>
             </div>
           </div>
         ))}
-      {currentData && currentData.length == 0 && (
-        <>
-          <ErrorMessage
-            ErrorMessage="No Driver Available"
-            className={"text-center mt-7"}
-          />
-        </>
+      {currentData && currentData.length === 0 && (
+        <div className="flex flex-col items-center my-10">
+          <NoDataFound />
+        </div>
       )}
       {currentData && currentData.length > 0 && (
         <Pagination

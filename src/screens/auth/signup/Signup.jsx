@@ -16,6 +16,8 @@ import { Routes } from "../../../utils/Routes";
 
 import { useNavigate } from "react-router-dom";
 import Modal from "../../../components/modals/Modal";
+import { Elements } from "@stripe/react-stripe-js";
+import { stripePromise } from "../../../helpers";
 
 const sections = [
   Section1,
@@ -52,23 +54,25 @@ const Signup = () => {
     billingAddress: "",
     pickupAddress: "",
     bookingDate: "",
+    bookingStart: "2025-01-07T14:00:00.000+00:00",
+    bookingEnd: "2025-01-07T18:00:00.000+00:00",
   });
 
   console.log("formData", formData);
-  useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      const message =
-        "Are you sure you want to leave? You may lose unsaved changes.";
-      event.returnValue = message; // Standard for most browsers
-      return message; // For some browsers like Chrome
-    };
+  // useEffect(() => {
+  //   const handleBeforeUnload = (event) => {
+  //     const message =
+  //       "Are you sure you want to leave? You may lose unsaved changes.";
+  //     event.returnValue = message; // Standard for most browsers
+  //     return message; // For some browsers like Chrome
+  //   };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    localStorage.removeItem("selectedInstructor");
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
+  //   window.addEventListener("beforeunload", handleBeforeUnload);
+  //   localStorage.removeItem("selectedInstructor");
+  //   return () => {
+  //     window.removeEventListener("beforeunload", handleBeforeUnload);
+  //   };
+  // }, []);
 
   const goBack = () => {
     if (section > 1) setSection(section - 1);
@@ -110,19 +114,21 @@ const Signup = () => {
         </div>
       </div>
       <div className="transition-all duration-500 px-5 mt-[250px] ">
-        <CurrentSection
-          setFormData={setFormData}
-          openModal={openModal}
-          closeModal={closeModal}
-          formData={formData}
-          setIsNext={setIsNext}
-          setContent={setContent}
-          setSection={setSection}
-          errorText={errorText}
-          setErrorText={setErrorText}
-          loading={loading}
-          setLoading={setLoading}
-        />
+        <Elements stripe={stripePromise}>
+          <CurrentSection
+            setFormData={setFormData}
+            openModal={openModal}
+            closeModal={closeModal}
+            formData={formData}
+            setIsNext={setIsNext}
+            setContent={setContent}
+            setSection={setSection}
+            errorText={errorText}
+            setErrorText={setErrorText}
+            loading={loading}
+            setLoading={setLoading}
+          />
+        </Elements>
       </div>
       <div className="flex justify-center items-center gap-4 mt-5 pb-10">
         {section !== 7 && section !== 1 && (
