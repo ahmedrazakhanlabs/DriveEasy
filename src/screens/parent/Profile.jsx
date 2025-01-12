@@ -17,8 +17,7 @@ const Profile = () => {
   const accordionData = [
     {
       title: "Edit Profile",
-      content:
-        "Edit your personal information and update your account details.",
+      onClick: () => navigate(Routes.parentEditProfile),
     },
     {
       title: "Day Availability",

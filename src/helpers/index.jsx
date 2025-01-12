@@ -56,3 +56,14 @@ export function formatTimeRange(slotStart, slotEnd) {
 
   return formatAMPM(start) + " - " + formatAMPM(end);
 }
+
+
+export const GetAuthData = () => {
+  try {
+    const user = JSON.parse(localStorage.getItem(localStorageKeys.userInfo));
+    return user || null; // Return `null` if userInfo is not found
+  } catch (error) {
+    console.error("Error parsing userInfo from localStorage:", error);
+    return null;
+  }
+};

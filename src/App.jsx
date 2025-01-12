@@ -16,18 +16,18 @@ const SplashScreen = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 7000);
+    }, 4000);
 
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div className="splash-screen bg-gradient-to-br from-blue-500 to-purple-600 text-white flex flex-col items-center justify-center h-screen">
+    <div className="splash-screen bg-gradient-to-br from-blue-500 to-purple-600 text-white flex flex-col items-center h-screen">
       <motion.div
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="mb-8"
+        className="mb-8 mt-[50%]"
       >
         <Car size={80} />
       </motion.div>
@@ -82,7 +82,7 @@ const App = () => {
     // Remove the splash screen after 4 minutes (240,000 milliseconds)
     const timer = setTimeout(() => {
       setShowSplash(false);
-    }, 7000);
+    }, 4000);
 
     // Clean up the timer on component unmount
     return () => clearTimeout(timer);
