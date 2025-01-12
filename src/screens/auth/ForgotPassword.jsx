@@ -27,6 +27,7 @@ const ForgotPassword = () => {
       try {
         const response = await postRequest("/pupil/forgot-password", {
           email: values.email,
+          redirectUrl: `${window.location.origin}${Routes.passwordSetup("")}`,
         });
         console.log("Registration Successful:", response);
         setIsSuccess(true); // Show success screen

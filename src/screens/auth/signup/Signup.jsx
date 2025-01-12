@@ -59,20 +59,26 @@ const Signup = () => {
   });
 
   console.log("formData", formData);
-  // useEffect(() => {
-  //   const handleBeforeUnload = (event) => {
-  //     const message =
-  //       "Are you sure you want to leave? You may lose unsaved changes.";
-  //     event.returnValue = message; // Standard for most browsers
-  //     return message; // For some browsers like Chrome
-  //   };
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      const message =
+        "Are you sure you want to leave? You may lose unsaved changes.";
+      event.returnValue = message; // Standard for most browsers
+      return message; // For some browsers like Chrome
+    };
 
-  //   window.addEventListener("beforeunload", handleBeforeUnload);
-  //   localStorage.removeItem("selectedInstructor");
-  //   return () => {
-  //     window.removeEventListener("beforeunload", handleBeforeUnload);
-  //   };
-  // }, []);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    localStorage.removeItem("selectedInstructor");
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+  console.log(
+    " window.location.href",
+    Routes.passwordSetup,
+    `${window.location.origin}${Routes.passwordSetup("")}`
+  );
+  
 
   const goBack = () => {
     if (section > 1) setSection(section - 1);

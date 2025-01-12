@@ -11,7 +11,7 @@ import { setPin } from "../../redux/slice";
 const OtpVerification = () => {
   const { key } = useParams();
   const [userType, setUserType] = useState(
-    key === "instructor" ? "instructor" : "pupil"
+    atob(key) === "instructor" ? "instructor" : "pupil"
   );
   // const [pin, setPin] = useState(["", "", "", ""]);
 

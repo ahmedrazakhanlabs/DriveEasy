@@ -27,6 +27,7 @@ import {
   useElements,
   CardElement,
 } from "@stripe/react-stripe-js";
+import { DebitCard } from "../../../../assets";
 
 export const Section1 = ({ setFormData, formData, setIsNext }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -716,13 +717,21 @@ export const Section6 = ({ setFormData, formData, setIsNext, errorText }) => {
 };
 
 // Main Section7 Component
-export const Section7 = ({ setSection, formData, setErrorText, loading, setLoading }) => {
+export const Section7 = ({
+  setSection,
+  formData,
+  setErrorText,
+  loading,
+  setLoading,
+  setIsNext,
+}) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [hasConfetti, setHasConfetti] = useState(false);
   const [loadingText, setLoadingText] = useState("It will take a moment");
-  const [pupilId, setPupilId] = useState(null);
-  const [bookingId, setBookingId] = useState(null);
-
+  const [showPayement, setShowPayement] = useState(true);
+  useEffect(() => {
+    setLoading(true);
+    setIsNext(false);
+  }, []);
   const loadingTexts = [
     "It will take a moment",
     "Loading",
@@ -768,16 +777,18 @@ export const Section7 = ({ setSection, formData, setErrorText, loading, setLoadi
         setLoading(false);
       }, 2000);
       setErrorText("Email already taken");
+      return;
     }
-    console.error("Registration Failed:", error.response?.data || error.message);
+    console.error(
+      "Registration Failed:",
+      error.response?.data || error.message
+    );
   };
 
   const Signup = async () => {
-    setLoading(true);
     try {
       const response = await postRequest("pupil/register", data);
       console.log("Registration Successful:", response.data);
-      setPupilId(response.data.pupilId);
       return response.data;
     } catch (error) {
       handleError(error);
@@ -786,7 +797,6 @@ export const Section7 = ({ setSection, formData, setErrorText, loading, setLoadi
   };
 
   const booking = async (pupilId) => {
-    setLoading(true);
     try {
       const response = await postRequest("booking/create", {
         ...bookingData,
@@ -799,20 +809,16 @@ export const Section7 = ({ setSection, formData, setErrorText, loading, setLoadi
     }
   };
 
-  
   const payForBooking = async (bookingId) => {
-    setLoading(true);
     try {
       const response = await postRequest("payment/payForBooking", {
         bookingId: bookingId,
       });
       console.log("Payment Response:", response);
       return response.data;
-
     } catch (error) {
       handleError(error);
     } finally {
-      setLoading(false);
     }
   };
   const [clientSecret, setClientSecret] = useState(null);
@@ -820,21 +826,21 @@ export const Section7 = ({ setSection, formData, setErrorText, loading, setLoadi
 
   useEffect(() => {
     const executeSignupAndBooking = async () => {
+      setLoading(true);
       try {
         const signupResult = await Signup();
         if (signupResult) {
           const { pupilId } = signupResult;
           const bookingId = await booking(pupilId);
-          setBookingId(bookingId);
           const bookingResponse = await payForBooking(bookingId);
           setClientSecret(bookingResponse.client_secret);
           setPayementId(bookingResponse.paymentId);
         } else {
-          setLoading(false);
+          // setLoading(false);
         }
       } catch (error) {
         console.error("Error in signup and booking process:", error);
-        setLoading(false);
+        // setLoading(false);
       }
     };
 
@@ -842,6 +848,7 @@ export const Section7 = ({ setSection, formData, setErrorText, loading, setLoadi
 
     setIsVisible(true);
     setLoading(false);
+    setShowPayement(false);
     const intervalId = setInterval(() => {
       setLoadingText((prevText) => {
         const currentIndex = loadingTexts.indexOf(prevText);
@@ -863,7 +870,7 @@ export const Section7 = ({ setSection, formData, setErrorText, loading, setLoadi
       }`}
     >
       <div className="w-full max-w-md py-[30px] p-4">
-        {loading ? (
+        {loading && showPayement ? (
           <div className="flex flex-col items-center justify-center py-[30px]">
             <Loader />
             <p className="font-Monsterrat text-[13px] my-4 font-extrabold">
@@ -872,23 +879,11 @@ export const Section7 = ({ setSection, formData, setErrorText, loading, setLoadi
           </div>
         ) : (
           <>
-            <PaymentForm clientSecret={clientSecret} payementId={payementId} />
-
-            {/* : hasConfetti ? (
-          <div className="absolute z-50 mt-[-270px]">
-            <Confetti />
-          </div>
-        )
-         */}
-            {/* <h2 className="font-MonsterratBold font-bold text-center text-xl">
-              Congratulations!
-            </h2>
-            <p className="font-Monsterrat font-bold text-center text-[15px]">
-              Your Booking has been created.
-            </p>
-            <button onClick={() => console.log("Pay now clicked")}>
-              Pay Now
-            </button> */}
+            <PaymentForm
+              clientSecret={clientSecret}
+              payementId={payementId}
+              setIsNext={setIsNext}
+            />
           </>
         )}
       </div>
@@ -896,34 +891,40 @@ export const Section7 = ({ setSection, formData, setErrorText, loading, setLoadi
   );
 };
 
-export const PaymentForm = ({ clientSecret, payementId }) => {
-  const [email, setEmail] = useState("");
+export const PaymentForm = ({
+  clientSecret,
+  payementId,
+  prefilledEmail,
+  setIsNext,
+}) => {
+  const [email, setEmail] = useState(prefilledEmail || "");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
 
   const stripe = useStripe();
   const elements = useElements();
-
+  const [hasConfetti, setHasConfetti] = useState(false);
 
   const confirmPayement = async () => {
-  
     try {
-      const response = await postRequest("payment/payementId", {
-        payementId: payementId,
+      const response = await postRequest("payment/confirmPayment", {
+        paymentId: payementId,
       });
       console.log("Payment Response:", response);
+      setIsNext(true);
       return response.data;
     } catch (error) {
-      handleError(error);
+      console.error("Error confirming payment:", error);
     } finally {
       setLoading(false);
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!stripe || !elements || !clientSecret ) {
+    if (!stripe || !elements || !clientSecret) {
       setError("Stripe is not properly initialized.");
       return;
     }
@@ -947,10 +948,12 @@ export const PaymentForm = ({ clientSecret, payementId }) => {
         setError(paymentResult.error.message);
         console.error("Payment failed:", paymentResult.error.message);
       } else if (paymentResult.paymentIntent.status === "succeeded") {
+        setHasConfetti(true);
+        setTimeout(() => setHasConfetti(false), 8000);
+
         console.log("Payment successful:", paymentResult.paymentIntent);
         setPaymentSuccess(true);
         confirmPayement();
-        
       }
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
@@ -962,46 +965,91 @@ export const PaymentForm = ({ clientSecret, payementId }) => {
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-center mb-4">
-        Complete Your Payment
-      </h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="card">
-            Card Details
-          </label>
-          <div className="p-3 border rounded-lg">
-            <CardElement
-              options={{
-                style: {
-                  base: {
-                    fontSize: "16px",
-                    color: "#424770",
-                    "::placeholder": { color: "#aab7c4" },
-                  },
-                  invalid: { color: "#9e2146" },
-                },
-              }}
-            />
+      {!paymentSuccess && (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <h1 className="font-Monsterrat text-md font-bold text-center mb-2">
+            Complete Your Payment
+          </h1>
+          <img
+            src={DebitCard}
+            alt=""
+            className="h-[242px] w-full object-contain"
+          />
+          <div className="px-4">
+            <div>
+              <label
+                className="font-Monsterrat font-bold text-[13px] text-black-1 opacity-80 mb-1"
+                htmlFor="email"
+              >
+                Email Address
+              </label>
+              <input
+                type="email"
+                id="email"
+                className="w-full font-semibold text-[13px] text-black-1 placeholder:text-black-1 placeholder:opacity-60 focus:outline-none p-3  border rounded-lg"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+            <div>
+              <label
+                className="font-Monsterrat font-bold text-[13px] text-black-1 opacity-80 mb-1"
+                htmlFor="card"
+              >
+                Card Details
+              </label>
+              <div className="p-3 border rounded-lg">
+                <CardElement
+                  options={{
+                    style: {
+                      base: {
+                        fontSize: "16px",
+                        color: "#424770",
+                        "::placeholder": { color: "#aab7c4" },
+                      },
+                      invalid: { color: "#9e2146" },
+                    },
+                  }}
+                />
+              </div>
+            </div>
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+            <button
+              type="submit"
+              className={`w-full bg-blue-500 text-white py-2 rounded-lg font-semibold hover:bg-blue-600 transition ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={loading || !stripe || !elements}
+            >
+              {loading ? "Processing..." : "Pay Now"}
+            </button>
           </div>
-        </div>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        {paymentSuccess && (
-          <p className="text-green-500 text-sm">Payment successful!</p>
-        )}
-        <button
-          type="submit"
-          className={`w-full bg-blue-500 text-white py-2 rounded-lg font-semibold hover:bg-blue-600 transition ${
-            loading ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          disabled={loading || !stripe || !elements}
-        >
-          {loading ? "Processing..." : "Pay Now"}
-        </button>
-      </form>
+        </form>
+      )}
+
+      {paymentSuccess && (
+        <>
+          <div className="absolute z-50 mt-[-270px]">
+            {hasConfetti && (
+              <div className="absolute z-50 mt-[-270px]">
+                <Confetti />
+              </div>
+            )}
+          </div>
+          <h2 className="font-MonsterratBold font-bold text-center text-xl">
+            Congratulations!
+          </h2>
+          <p className="font-Monsterrat font-bold text-center text-[15px]">
+            Your Booking has been created.
+          </p>
+        </>
+      )}
     </div>
   );
 };
+
 
 
 

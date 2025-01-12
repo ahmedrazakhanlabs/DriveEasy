@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  pin: ["", "", "", "", "", ""],
+  pin: ["", "", "", ""],
 };
 
 const pinSlice = createSlice({
