@@ -28,6 +28,10 @@ export default {
           6: "#eaeaea",
         },
       },
+      backgroundImage: {
+        customRadial:
+          "radial-gradient(circle, rgba(60,25,210,1) 0%, rgba(90,117,255,1) 50%, rgba(59,0,195,1) 100%)",
+      },
       screens: {
         xxxs: "280px",
         xxs: "320px",

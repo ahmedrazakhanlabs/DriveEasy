@@ -5,14 +5,16 @@ import { useNavigate } from "react-router-dom";
 import { homeSection1, homeSection2 } from "../../utils/Data.jsx";
 import ProfileHeader from "../../components/ProfileHeader.jsx";
 import { WomenProfile } from "../../assets/index";
+import { localStorageKeys } from "../../helpers/index.jsx";
 const Home = () => {
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem(localStorageKeys.userInfo));
 
   return (
     <>
       <ProfileHeader
         text="Good Morning!"
-        name="Ahmed Raza Khan"
+        name={user.firstName}
         pfp={WomenProfile}
       />
       <div className="px-4">

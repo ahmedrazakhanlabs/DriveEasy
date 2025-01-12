@@ -15,7 +15,9 @@ import { jwtDecode } from "jwt-decode";
 import {
   getDecodedToken,
   getTokenFromLocalStorage,
+  localStorageKeys,
   Roles,
+  saveItemToLocalStorage,
   saveTokenToLocalStorage,
 } from "../../helpers";
 import { useSelector } from "react-redux";
@@ -44,10 +46,15 @@ const Login = () => {
           password: values.password,
           otp: pin.join("") || "496253", // Example OTP
         });
-        console.log("respologinnse", response);
+        console.log("respologinnse1", response.data.pupil);
+        console.log("respologinnse", response.data);
 
         if (response.data.token) {
           saveTokenToLocalStorage(response.data.token);
+          saveItemToLocalStorage(
+            localStorageKeys.userInfo,
+            response.data.pupil
+          );
           const decode = getDecodedToken();
           console.log("decode", decode);
 

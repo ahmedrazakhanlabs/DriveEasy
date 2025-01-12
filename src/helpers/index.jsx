@@ -14,6 +14,11 @@ export const Roles = {
 
 export const localStorageKeys = {
   authToken: "authToken",
+  userInfo: "userInfo",
+};
+export const saveItemToLocalStorage = (key, item) => {
+  console.log("saveItemToLocalStorage", key, item);
+  localStorage.setItem(key, JSON.stringify(item)); // Convert the item to a string
 };
 
 export const saveTokenToLocalStorage = (authToken) =>
@@ -31,8 +36,8 @@ export const getDecodedToken = () => {
 };
 
 export const logout = () => {
-  localStorage.removeItem(localStorageKeys.authToken);
-  window.location.href = Routes.parentHome;
+  localStorage.clear();
+  window.location.href = Routes.login;
 };
 
 export function formatTimeRange(slotStart, slotEnd) {

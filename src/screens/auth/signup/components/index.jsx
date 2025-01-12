@@ -993,7 +993,7 @@ export const PaymentForm = ({
                 required
               />
             </div>
-            <div>
+            <div className="my-[20px]">
               <label
                 className="font-Monsterrat font-bold text-[13px] text-black-1 opacity-80 mb-1"
                 htmlFor="card"
