@@ -1,5 +1,5 @@
 import axios from "axios";
-import { baseUrl } from ".";
+import { baseUrl, getTokenFromLocalStorage } from ".";
 
 const apiClient = axios.create({
   baseURL: baseUrl,
@@ -11,8 +11,14 @@ const apiClient = axios.create({
 });
 
 export const getRequest = async (url, params = {}) => {
+  const token = getTokenFromLocalStorage();
   try {
-    const response = await apiClient.get(url, { params });
+    const response = await apiClient.get(url, {
+      params,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("GET Request Error:", error.response?.data || error.message);
@@ -20,9 +26,39 @@ export const getRequest = async (url, params = {}) => {
   }
 };
 
+// export const postRequest = async (url, data) => {
+//   const token = getTokenFromLocalStorage();
+//   console.log("token", token);
+
+//   try {
+//     const response = await apiClient.post(url, {
+//       data,
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
+//     console.log("response", response);
+//     return response;
+//   } catch (error) {
+//     console.error("POST Request Error:", error.response?.data || error.message);
+//     throw error;
+//   }
+// };
+
 export const postRequest = async (url, data) => {
+  const token = getTokenFromLocalStorage();
+  console.log("token", token);
+
   try {
-    const response = await apiClient.post(url, data);
+    const response = await apiClient.post(
+      url,
+      data, // Pass `data` as the body of the request
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Set the Authorization header here
+        },
+      }
+    );
     console.log("response", response);
     return response;
   } catch (error) {

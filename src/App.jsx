@@ -16,7 +16,7 @@ const SplashScreen = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 4000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -82,7 +82,7 @@ const App = () => {
     // Remove the splash screen after 4 minutes (240,000 milliseconds)
     const timer = setTimeout(() => {
       setShowSplash(false);
-    }, 4000);
+    }, 3000);
 
     // Clean up the timer on component unmount
     return () => clearTimeout(timer);

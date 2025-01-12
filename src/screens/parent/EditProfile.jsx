@@ -12,8 +12,11 @@ import { useEffect, useState } from "react";
 import { GetAuthData, logout } from "../../helpers";
 import Modal from "../../components/modals/Modal";
 import UploadableProfilePicture from "../../components/UploadProfile";
+import { Routes } from "../../utils/Routes";
+import { useNavigate } from "react-router-dom";
 const EditProfile = () => {
   const [isModalOpen, setModalOpen] = useState(false);
+  const navigate = useNavigate();
   const [authData, setAuthData] = useState([]);
   useEffect(() => {
     const userData = GetAuthData();
@@ -23,26 +26,6 @@ const EditProfile = () => {
 
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
-
-  const handleProfilePictureUpload = async (file) => {
-    try {
-      // Here you would typically upload the file to your server or a cloud storage service
-      // For this example, we'll just create a local URL
-      const imageUrl = URL.createObjectURL(file);
-
-      // Update the authData state with the new profile picture URL
-      setAuthData((prevData) => ({
-        ...prevData,
-        profilePicture: imageUrl,
-      }));
-
-      // You might want to make an API call here to update the user's profile picture in your backend
-      // await updateProfilePictureAPI(imageUrl);
-    } catch (error) {
-      console.error("Error uploading profile picture:", error);
-      // Handle error (e.g., show an error message to the user)
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 ">
@@ -72,11 +55,14 @@ const EditProfile = () => {
         {/* Header */}
         <header className="flex items-center justify-between p-4 border-b">
           <button className="p-2">
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft
+              className="h-5 w-5"
+              onClick={() => navigate(Routes.parentProfile)}
+            />
           </button>
           <h1 className="font-Monsterrat text-md font-bold">My Profile</h1>
           <button className="p-2">
-            <MoreVertical className="h-5 w-5" />
+            {/* <MoreVertical className="h-5 w-5" /> */}
           </button>
         </header>
 
@@ -85,9 +71,11 @@ const EditProfile = () => {
           <div className="flex items-center gap-4 mb-8">
             <div className="h-16 w-16 rounded-full flex justify-center items-center bg-gray-100 overflow-hidden">
               <UploadableProfilePicture
-                currentImage={authData.profilePicture}
-                defaultImage={DefualtImage}
-                onUpload={handleProfilePictureUpload}
+                currentImage={
+                  authData.profilePicture !== "https://example.com/profile.jpg"
+                    ? authData.profilePicture
+                    : DefualtImage
+                }
               />
             </div>
             <div className="flex-1">
