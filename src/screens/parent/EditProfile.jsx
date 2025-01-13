@@ -1,6 +1,9 @@
 import { ArrowLeft } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import DynamicTabs from "../../components/Tabs";
+import Input from "../../components/Input";
+import { UserIcon } from "../../utils/Icons";
 
 const EditProfile = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -25,6 +28,8 @@ const EditProfile = () => {
             {/* <MoreVertical className="h-5 w-5" /> */}
           </button>
         </header>
+
+        <DynamicTabs tabs={tabs} />
       </div>
     </div>
   );

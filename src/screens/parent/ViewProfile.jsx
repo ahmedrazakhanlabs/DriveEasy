@@ -1,4 +1,11 @@
-import { ChevronLeft, PenSquare, Wallet, Trophy, Shield } from "lucide-react";
+import {
+  ChevronLeft,
+  PenSquare,
+  Wallet,
+  Trophy,
+  Shield,
+  ArrowLeft,
+} from "lucide-react";
 import Button from "../../components/Button";
 import { DefualtImage } from "../../assets";
 import { useEffect, useState } from "react";
@@ -56,7 +63,7 @@ const EditProfile = () => {
         {/* Header */}
         <header className="flex items-center justify-between p-4 border-b">
           <button className="p-2">
-            <ChevronLeft
+            <ArrowLeft
               className="h-5 w-5"
               onClick={() => navigate(Routes.parentProfile)}
             />

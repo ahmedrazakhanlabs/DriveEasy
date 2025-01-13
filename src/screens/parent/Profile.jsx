@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Accordition from "../../components/Accordition";
 import Menubar from "../../components/Menubar";
-import { ChevronLeft } from "lucide-react";
+import { ArrowLeft, ChevronLeft } from "lucide-react";
 import { Routes } from "../../utils/Routes";
 import { useNavigate } from "react-router-dom";
 import Modal from "../../components/modals/Modal";
@@ -53,7 +53,7 @@ const Profile = () => {
           onClick={() => navigate(Routes.parentHome)}
           className="p-2 absolute left-2 rounded-full hover:bg-gray-100"
         >
-          <ChevronLeft className="h-5 w-5" />
+          <ArrowLeft className="h-5 w-5" />
         </button>
         <h1 className="text-center font-MonsterratBold my-7 text-[18px] font-semibold">
           Profile

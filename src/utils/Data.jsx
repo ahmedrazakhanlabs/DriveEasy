@@ -19,6 +19,7 @@ import {
   MessageIcon,
   PhoneIcon,
   ProfileIcon,
+  UserIcon,
   WalletIcon,
   WorldIcon,
 } from "./Icons";
@@ -39,6 +40,7 @@ import ForgotPassword from "../screens/auth/ForgotPassword.jsx";
 import PasswordSetup from "../screens/auth/PasswordSetup.jsx";
 import ViewProfile from "../screens/parent/ViewProfile.jsx";
 import EditProfile from "../screens/parent/EditProfile.jsx";
+import Input from "../components/Input.jsx";
 
 export const publicRoutes = [
   { path: Routes.OtpVerification(":key"), element: <OtpVerification /> },
@@ -413,5 +415,52 @@ export const accordionData = (navigate, openModal) => [
   {
     title: "Log Out",
     onClick: () => openModal(),
+  },
+];
+
+const tabs = [
+  {
+    id: 0,
+    title: "Personal Information",
+    content: (
+      <form onSubmit={formik.handleSubmit} className="my-7 mx-5">
+        <Input
+          prefixIcon={<UserIcon />}
+          className={"mb-4"}
+          type="email"
+          placeholder="Email"
+          name="email"
+          value={formik.values.email}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.email && formik.errors.email}
+        />
+      </form>
+    ),
+  },
+  {
+    id: 1,
+    title: "Address Details",
+    content: (
+      <div className="p-4 bg-white rounded-lg shadow">
+        <h2 className="text-2xl font-bold mb-4">Content for Tab 2</h2>
+        <p>
+          This is the content for Tab 2. It's easy to add new tabs or modify
+          existing ones.
+        </p>
+      </div>
+    ),
+  },
+  {
+    id: 2,
+    title: "Payment Information",
+    content: (
+      <div className="p-4 bg-white rounded-lg shadow">
+        <h2 className="text-2xl font-bold mb-4">Content for Tab 3</h2>
+        <p>
+          This is the content for Tab 3. You can have as many tabs as you need.
+        </p>
+      </div>
+    ),
   },
 ];
