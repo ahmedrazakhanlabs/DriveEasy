@@ -423,17 +423,17 @@ const tabs = [
     id: 0,
     title: "Personal Information",
     content: (
-      <form onSubmit={formik.handleSubmit} className="my-7 mx-5">
+      <form  className="my-7 mx-5">
         <Input
           prefixIcon={<UserIcon />}
           className={"mb-4"}
           type="email"
           placeholder="Email"
           name="email"
-          value={formik.values.email}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={formik.touched.email && formik.errors.email}
+          // value={formik.values.email}
+          // onChange={formik.handleChange}
+          // onBlur={formik.handleBlur}
+          // error={formik.touched.email && formik.errors.email}
         />
       </form>
     ),
