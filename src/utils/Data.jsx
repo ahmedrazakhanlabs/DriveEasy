@@ -13,7 +13,9 @@ import AddContact from "../screens/parent/contacts/subpage/AddContact";
 import Profile from "../screens/parent/Profile";
 import RelativeLogs from "../screens/parent/RelativeLogs";
 import InstructorHome from "../screens/instructor/Home/Home.jsx";
+import UploadProfile from "../components/UploadProfile.jsx";
 import {
+  CalenderIcon2,
   ClipboardIcon,
   HomeIcon,
   MessageIcon,
@@ -32,7 +34,15 @@ import {
   ProgressIcon,
 } from "./Icons.jsx";
 import { useNavigate } from "react-router-dom";
-import { Plus } from "lucide-react";
+import {
+  Calendar,
+  CreditCard,
+  Mail,
+  Map,
+  MapPin,
+  Phone,
+  Plus,
+} from "lucide-react";
 import Pupil from "../screens/instructor/Pupil.jsx";
 import UserVault from "../screens/auth/UserVault.jsx";
 import InstructorSignUp from "../screens/auth/InstructorSignUp.jsx";
@@ -41,6 +51,7 @@ import PasswordSetup from "../screens/auth/PasswordSetup.jsx";
 import ViewProfile from "../screens/parent/ViewProfile.jsx";
 import EditProfile from "../screens/parent/EditProfile.jsx";
 import Input from "../components/Input.jsx";
+import { DebitCard } from "../assets/index.jsx";
 
 export const publicRoutes = [
   { path: Routes.OtpVerification(":key"), element: <OtpVerification /> },
@@ -418,36 +429,124 @@ export const accordionData = (navigate, openModal) => [
   },
 ];
 
-const tabs = [
+const fields = [
+  {
+    name: "firstName",
+    type: "text",
+    placeholder: "First Name",
+    icon: <UserIcon />,
+  },
+  {
+    name: "lastName",
+    type: "text",
+    placeholder: "Last Name",
+    icon: <UserIcon />,
+  },
+  {
+    name: "email",
+    type: "email",
+    placeholder: "Email",
+    icon: <Mail className="text-purple-1" />,
+  },
+  {
+    name: "phoneNumber",
+    type: "tel",
+    placeholder: "Phone Number",
+    icon: <Phone className="text-purple-1" />,
+  },
+  {
+    name: "dob",
+    type: "date",
+    placeholder: "Date of Birth",
+    icon: <CalenderIcon2 fill="#6A2CF9" height="20" width="20" />,
+  },
+];
+
+const billingFields = [
+  {
+    name: "pickupAddress",
+    type: "text",
+    placeholder: "Pickup Address",
+    icon: <MapPin className="text-purple-1" />,
+  },
+  {
+    name: "billingAddress",
+    type: "text",
+    placeholder: "Billing Address",
+    icon: <MapPin className="text-purple-1" />,
+  },
+  {
+    name: "postalCode",
+    type: "number",
+    placeholder: "Postal Code",
+    icon: <Map className="text-purple-1" />,
+  },
+];
+
+const paymentFields = [
+  {
+    name: "cardNo",
+    type: "text",
+    placeholder: "Card Number",
+    icon: <CreditCard className="text-purple-1" />,
+  },
+  {
+    name: "expiry",
+    type: "text",
+    placeholder: "Expiry (MM/YY)",
+    icon: <CreditCard className="text-purple-1" />,
+  },
+  {
+    name: "cvv",
+    type: "number",
+    placeholder: "CVV",
+    icon: <CreditCard className="text-purple-1" />,
+  },
+  {
+    name: "cardHolderName",
+    type: "text",
+    placeholder: "Cardholder Name",
+    icon: <CreditCard className="text-purple-1" />,
+  },
+];
+
+export const tabs = [
   {
     id: 0,
     title: "Personal Information",
     content: (
-      <form  className="my-7 mx-5">
-        <Input
-          prefixIcon={<UserIcon />}
-          className={"mb-4"}
-          type="email"
-          placeholder="Email"
-          name="email"
-          // value={formik.values.email}
-          // onChange={formik.handleChange}
-          // onBlur={formik.handleBlur}
-          // error={formik.touched.email && formik.errors.email}
-        />
-      </form>
+      <div className="my-7 mx-5">
+        <div className="flex justify-center items-start">
+          <UploadProfile />
+        </div>
+        {fields.map((field) => (
+          <Input
+            key={field.name}
+            prefixIcon={field.icon}
+            className={"mb-4"}
+            type={field.type}
+            placeholder={field.placeholder}
+            name={field.name}
+          />
+        ))}
+      </div>
     ),
   },
   {
     id: 1,
     title: "Address Details",
     content: (
-      <div className="p-4 bg-white rounded-lg shadow">
-        <h2 className="text-2xl font-bold mb-4">Content for Tab 2</h2>
-        <p>
-          This is the content for Tab 2. It's easy to add new tabs or modify
-          existing ones.
-        </p>
+      <div className="my-7 mx-5">
+        {billingFields.map((field) => (
+          <Input
+            key={field.name}
+            prefixIcon={field.icon}
+            className={"mb-4"}
+            type={field.type}
+            placeholder={field.placeholder}
+            name={field.name}
+          />
+        ))}
       </div>
     ),
   },
@@ -455,11 +554,18 @@ const tabs = [
     id: 2,
     title: "Payment Information",
     content: (
-      <div className="p-4 bg-white rounded-lg shadow">
-        <h2 className="text-2xl font-bold mb-4">Content for Tab 3</h2>
-        <p>
-          This is the content for Tab 3. You can have as many tabs as you need.
-        </p>
+      <div className="my-7 mx-5">
+        <img src={DebitCard} alt="" />
+        {paymentFields.map((field) => (
+          <Input
+            key={field.name}
+            prefixIcon={field.icon}
+            className={"mb-4"}
+            type={field.type}
+            placeholder={field.placeholder}
+            name={field.name}
+          />
+        ))}
       </div>
     ),
   },

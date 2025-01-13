@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import DynamicTabs from "../../components/Tabs";
 import Input from "../../components/Input";
 import { UserIcon } from "../../utils/Icons";
+import { tabs } from "../../utils/Data";
+import Button from "../../components/Button";
 
 const EditProfile = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -13,7 +15,7 @@ const EditProfile = () => {
   }, []);
   return (
     <div
-      className={`transition-all relative duration-700 h-screen transform ${
+      className={`transition-all relative duration-700 min-h-screen transform ${
         isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full"
       }`}
     >
@@ -30,6 +32,10 @@ const EditProfile = () => {
         </header>
 
         <DynamicTabs tabs={tabs} />
+        <div className="flex justify-center gap-4 my-4 mx-5">
+          <Button label="Save" className={"justify-center rounded-lg"} />
+          <Button label="Cancel" className={"justify-center rounded-lg"} />
+        </div>
       </div>
     </div>
   );

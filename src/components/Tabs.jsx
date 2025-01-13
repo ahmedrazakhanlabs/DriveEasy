@@ -29,7 +29,7 @@ export default function DynamicTabs({ tabs }) {
               {activeTab === index && (
                 <motion.div
                   layoutId="active-tab"
-                  className="absolute inset-0 bg-purple-600 rounded-md"
+                  className="absolute inset-0 bg-purple-1 rounded-md"
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                 />
               )}

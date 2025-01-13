@@ -1,6 +1,7 @@
 import { jwtDecode } from "jwt-decode";
 import { Routes } from "../utils/Routes";
 import { loadStripe } from "@stripe/stripe-js";
+import { DefualtImage } from "../assets";
 
 export const baseUrl = "https://driving-app-backend.vercel.app/v1/";
 const stripeKey =
@@ -57,7 +58,6 @@ export function formatTimeRange(slotStart, slotEnd) {
   return formatAMPM(start) + " - " + formatAMPM(end);
 }
 
-
 export const GetAuthData = () => {
   try {
     const user = JSON.parse(localStorage.getItem(localStorageKeys.userInfo));
@@ -68,7 +68,11 @@ export const GetAuthData = () => {
   }
 };
 
-
 export const AuthUser = JSON.parse(
   localStorage.getItem(localStorageKeys.userInfo)
 );
+
+export const AuthUserPfpImage =
+  AuthUser?.profilePicture !== "https://example.com/profile.jpg"
+    ? AuthUser?.profilePicture
+    : DefualtImage;

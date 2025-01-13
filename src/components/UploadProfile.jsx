@@ -4,8 +4,9 @@ import Modal from "./modals/Modal";
 import Button from "./Button";
 import { postRequest } from "../helpers/Functions";
 import { motion } from "framer-motion";
+import { AuthUserPfpImage } from "../helpers";
 
-const UploadableProfilePicture = ({ currentImage }) => {
+const UploadableProfilePicture = () => {
   const [isHovered, setIsHovered] = useState(false);
   const fileInputRef = useRef(null);
   const [loading, setLoading] = useState(false);
@@ -14,6 +15,7 @@ const UploadableProfilePicture = ({ currentImage }) => {
   const [previewFile, setPreviewFile] = useState(null); // URL for preview
   const [file, setFile] = useState(null);
 
+  console.log("previewFile", previewFile);
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
 
@@ -80,7 +82,7 @@ const UploadableProfilePicture = ({ currentImage }) => {
           <div className="flex flex-col items-center">
             <div className="flex flex-col justify-center items-center">
               <img
-                src={previewFile || currentImage}
+                src={previewFile || AuthUserPfpImage}
                 className="h-[105px] w-[105px] mb-3 rounded-full object-cover"
                 alt="Profile picture"
               />
@@ -113,8 +115,8 @@ const UploadableProfilePicture = ({ currentImage }) => {
         onClick={handleClick}
       >
         <img
-          src={previewFile || currentImage}
-          className="h-[65px] w-[65px] rounded-full object-cover"
+          src={previewFile || AuthUserPfpImage}
+          className="h-[190px] w-[190px] rounded-full object-cover"
           alt="Profile picture"
         />
         <div
@@ -125,12 +127,12 @@ const UploadableProfilePicture = ({ currentImage }) => {
               initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.2 }}
-              className="mb-8 mt-[50%]"
+              className="mb-8 mt-[10%]"
             >
               <div
-                className={`bg-black-1  opacity-50 h-[65px] w-[65px] rounded-full flex items-center justify-center`}
+                className={`bg-black-1  opacity-50 h-[190px] w-[190px] rounded-full flex items-center justify-center`}
               >
-                <Upload className="text-white" />
+                <Upload className="text-white h-8 w-16" />
               </div>
             </motion.div>
           )}
