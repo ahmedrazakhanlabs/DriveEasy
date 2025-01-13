@@ -37,6 +37,7 @@ import UserVault from "../screens/auth/UserVault.jsx";
 import InstructorSignUp from "../screens/auth/InstructorSignUp.jsx";
 import ForgotPassword from "../screens/auth/ForgotPassword.jsx";
 import PasswordSetup from "../screens/auth/PasswordSetup.jsx";
+import ViewProfile from "../screens/parent/ViewProfile.jsx";
 import EditProfile from "../screens/parent/EditProfile.jsx";
 
 export const publicRoutes = [
@@ -54,6 +55,7 @@ export const privateRoutes = [
   { path: Routes.parentLessons, element: <Lessons /> },
   { path: Routes.parentDrivingAbility, element: <DrivingAbility /> },
   { path: Routes.parentPayement, element: <Payement /> },
+  { path: Routes.parentViewProfile, element: <ViewProfile /> },
   { path: Routes.parentEditProfile, element: <EditProfile /> },
   { path: Routes.parentInbox, element: <Inbox /> },
   { path: Routes.parentInboxById(":id"), element: <InboxById /> },
@@ -374,3 +376,42 @@ export const signUpDropdownItems = (setDrivingLevel) =>
     label: key,
     onClick: () => setDrivingLevel(value),
   }));
+
+export const accordionData = (navigate, openModal) => [
+  {
+    title: "Edit Profile",
+    onClick: () => navigate(Routes.parentViewProfile),
+  },
+  {
+    title: "Day Availability",
+    content: "Set your availability for scheduling driving lessons.",
+  },
+  {
+    title: "Change Profile Photo",
+    content: "Upload or change your profile picture.",
+  },
+  {
+    title: "Invite Parents",
+    content: "Send an invitation to parents to track your driving progress.",
+  },
+  {
+    title: "Call Instructor",
+    content: "Directly call your driving instructor for queries or updates.",
+  },
+  {
+    title: "Send SMS Message",
+    content: "Send a text message to your instructor or the driving school.",
+  },
+  {
+    title: "Driving School Terms & Conditions",
+    content: "Review the terms and conditions of the driving school.",
+  },
+  {
+    title: "App Terms of Use",
+    content: "Read the terms of use for the application.",
+  },
+  {
+    title: "Log Out",
+    onClick: () => openModal(),
+  },
+];

@@ -1,10 +1,13 @@
 import { ChevronRight } from "lucide-react";
 import React, { useState } from "react";
 
-const Accordition = ({ items }) => {
+const Accordition = ({ items, isOpen }) => {
   const [activeAccordion, setActiveAccordion] = useState(null);
 
   const toggleAccordion = (index) => {
+    if (!isOpen) {
+      return;
+    }
     setActiveAccordion((prev) => (prev === index ? null : index));
   };
 

@@ -67,3 +67,8 @@ export const GetAuthData = () => {
     return null;
   }
 };
+
+
+export const AuthUser = JSON.parse(
+  localStorage.getItem(localStorageKeys.userInfo)
+);

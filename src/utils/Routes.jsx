@@ -20,6 +20,7 @@ export const Routes = {
   parentInbox: `${Pupils}/inbox`,
   parentPayement: `${Pupils}/payement`,
   parentProfile: `${Pupils}/profile`,
+  parentViewProfile: `${Pupils}/view-profile`,
   parentEditProfile: `${Pupils}/edit-profile`,
   parentInboxById: (id) => `${Pupils}/inbox/${id}`,
 

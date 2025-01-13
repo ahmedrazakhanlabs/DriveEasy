@@ -4,18 +4,21 @@ import Menubar from "../../components/Menubar.jsx";
 import { useNavigate } from "react-router-dom";
 import { homeSection1, homeSection2 } from "../../utils/Data.jsx";
 import ProfileHeader from "../../components/ProfileHeader.jsx";
-import { WomenProfile } from "../../assets/index";
-import { localStorageKeys } from "../../helpers/index.jsx";
+import { DefualtImage } from "../../assets/index";
+import { AuthUser } from "../../helpers/index.jsx";
 const Home = () => {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem(localStorageKeys.userInfo));
 
   return (
     <>
       <ProfileHeader
         text="Good Morning!"
-        name={user.firstName}
-        pfp={WomenProfile}
+        name={AuthUser.firstName}
+        pfp={
+          AuthUser.profilePicture !== "https://example.com/profile.jpg"
+            ? AuthUser.profilePicture
+            : DefualtImage
+        }
       />
       <div className="px-4">
         <div className="bg-white rounded-3xl shadow-lg p-4 mt-8 ">

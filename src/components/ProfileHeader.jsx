@@ -33,7 +33,7 @@ const ProfileHeader = ({ pfp, text, name }) => {
             <p className="font-Monsterrat text-white text-[11px] ml-7 sm:text-sm">
               {text}
             </p>
-            <h1 className="font-MonsterratBold font-extrabold text-white text-[20px] sm:text-[25px] ml-7">
+            <h1 className="font-MonsterratBold capitalize font-extrabold text-white text-[20px] sm:text-[25px] ml-7">
               {name}
             </h1>
           </div>

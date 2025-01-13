@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Accordition from "../../components/Accordition";
 import Menubar from "../../components/Menubar";
 import { ChevronLeft } from "lucide-react";
@@ -7,54 +7,25 @@ import { useNavigate } from "react-router-dom";
 import Modal from "../../components/modals/Modal";
 import Button from "../../components/Button";
 import { logout } from "../../helpers";
+import { accordionData } from "../../utils/Data";
 
 const Profile = () => {
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
-  const accordionData = [
-    {
-      title: "Edit Profile",
-      onClick: () => navigate(Routes.parentEditProfile),
-    },
-    {
-      title: "Day Availability",
-      content: "Set your availability for scheduling driving lessons.",
-    },
-    {
-      title: "Change Profile Photo",
-      content: "Upload or change your profile picture.",
-    },
-    {
-      title: "Invite Parents",
-      content: "Send an invitation to parents to track your driving progress.",
-    },
-    {
-      title: "Call Instructor",
-      content: "Directly call your driving instructor for queries or updates.",
-    },
-    {
-      title: "Send SMS Message",
-      content: "Send a text message to your instructor or the driving school.",
-    },
-    {
-      title: "Driving School Terms & Conditions",
-      content: "Review the terms and conditions of the driving school.",
-    },
-    {
-      title: "App Terms of Use",
-      content: "Read the terms of use for the application.",
-    },
-    {
-      title: "Log Out",
-      onClick: () => openModal(),
-    },
-  ];
 
   return (
-    <div className="px-5 relative">
+    <div
+      className={`transition-all px-5 relative duration-700 h-screen transform ${
+        isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-full"
+      }`}
+    >
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
@@ -89,7 +60,7 @@ const Profile = () => {
         </h1>
       </div>
 
-      <Accordition items={accordionData} />
+      <Accordition items={accordionData(navigate, openModal)} isOpen={false} />
     </div>
   );
 };
