@@ -13,10 +13,10 @@ const Home = () => {
     <>
       <ProfileHeader
         text="Good Morning!"
-        name={AuthUser.firstName}
+        name={AuthUser?.firstName}
         pfp={
-          AuthUser.profilePicture !== "https://example.com/profile.jpg"
-            ? AuthUser.profilePicture
+          AuthUser?.profilePicture !== "https://example.com/profile.jpg"
+            ? AuthUser?.profilePicture
             : DefualtImage
         }
       />

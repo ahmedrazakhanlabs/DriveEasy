@@ -21,6 +21,7 @@ import {
   saveTokenToLocalStorage,
 } from "../../helpers";
 import { useSelector } from "react-redux";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ const Login = () => {
         const response = await postRequest("/pupil/login", {
           email: values.email,
           password: values.password,
-          otp: pin.join("") || "496253", // Example OTP
+          otp: pin.join("") || "0000", // Example OTP
         });
         console.log("respologinnse1", response.data.pupil);
         console.log("respologinnse", response.data);
@@ -65,14 +66,16 @@ const Login = () => {
           );
         }
       } catch (error) {
+        console.log("error", error.response.data.message);
         setErrors({
-          credentials: "Invalid credientials. Please try again.",
+          credentials: error.response.data.message,
         });
       } finally {
         setSubmitting(false);
       }
     },
   });
+  const encodedValue = btoa("pupil"); // Base64 encode the value
 
   return (
     <div>
@@ -105,10 +108,22 @@ const Login = () => {
           onBlur={formik.handleBlur}
           error={formik.touched.password && formik.errors.password}
         />
-        <ErrorMessage
-          ErrorMessage={formik.errors.credentials}
-          className={"text-center"}
-        />
+        <div className="flex justify-center">
+          <ErrorMessage
+            ErrorMessage={formik.errors.credentials}
+            className={"text-center"}
+          />
+          {formik.errors.credentials == "The OTP is incorrect" && (
+            <Link
+              to={Routes.OtpVerification(encodedValue)}
+              className="mx-1 text-[12px] text-muted-foreground  hover:text-purple-1 font-bold font-Monsterrat inline-flex items-center "
+            >
+              {" "}
+              <ArrowRight className="h-3 w-3" />
+              Otp Verification
+            </Link>
+          )}
+        </div>
 
         <Button
           label="Login"
